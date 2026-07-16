@@ -1,5 +1,7 @@
 # adversarial-verify
 
+**Live pages:** https://gourneau.github.io/adversarial-verify/
+
 **A verify-before-you-commit harness for high-stakes decisions where the data is written by someone who profits from your believing it** — listings, vendors, contractors, marketplaces, job posts.
 
 Plus the story of using a swarm of ~249 AI agents to do something completely mundane: book one vacation condo.
@@ -40,7 +42,7 @@ skills/
     templates/            ← runnable multi-agent workflow scripts
     checklists/           ← pre-commit checklist
   trip-planner/           ← domain application (travel), loads adversarial-verify
-site/                     ← the four write-up / plan pages (self-contained HTML)
+docs/                     ← the four write-up / plan pages (self-contained HTML) — served via GitHub Pages
 ```
 
 The skills are written for [Claude Code](https://claude.com/claude-code) (drop `skills/adversarial-verify` into `~/.claude/skills/`), but the method is tool-agnostic — it works with the Anthropic SDK or any agent harness.
