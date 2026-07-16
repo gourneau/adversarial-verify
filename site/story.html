@@ -1,0 +1,150 @@
+<!doctype html>
+<!-- The Story (short) · 2026 · the shareable 3-minute version -->
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>The Condo That Took 249 Agents — the short version</title>
+<meta name="description" content="How I used a swarm of AI agents to do something completely mundane — book a vacation rental — and what it accidentally taught me about how people decide. The 3-minute version.">
+<style>
+  :root{
+    --paper:#f4f1ea; --card:#fefcf7; --ink:#1f262a; --sand:#ece5d6; --line:#e4dccd;
+    --muted:#6f7168; --text:#242b27; --teal:#0e6b63; --teal-deep:#0a4f49; --coral:#d3562a; --good:#2c7a54;
+    --shadow:0 1px 2px rgba(31,38,42,.05),0 10px 30px rgba(31,38,42,.07);
+    --serif:"Iowan Old Style","Palatino Linotype","Book Antiqua",Palatino,Georgia,serif;
+    --sans:system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+  }
+  @media (prefers-color-scheme:dark){:root{
+    --paper:#0e1417; --card:#151c1f; --ink:#eef1ea; --sand:#1b2a2b; --line:#26343a;
+    --muted:#98a29a; --text:#dde6df; --teal:#46b3a8; --teal-deep:#63c6ba; --coral:#f0764c; --good:#5cd196;
+    --shadow:0 1px 2px rgba(0,0,0,.4),0 12px 34px rgba(0,0,0,.38);
+  }}
+  :root[data-theme="light"]{--paper:#f4f1ea;--card:#fefcf7;--ink:#1f262a;--sand:#ece5d6;--line:#e4dccd;--muted:#6f7168;--text:#242b27;--teal:#0e6b63;--teal-deep:#0a4f49;--coral:#d3562a;--good:#2c7a54;}
+  :root[data-theme="dark"]{--paper:#0e1417;--card:#151c1f;--ink:#eef1ea;--sand:#1b2a2b;--line:#26343a;--muted:#98a29a;--text:#dde6df;--teal:#46b3a8;--teal-deep:#63c6ba;--coral:#f0764c;--good:#5cd196;}
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--paper);color:var(--text);font-family:var(--sans);line-height:1.62;-webkit-text-size-adjust:100%}
+  .wrap{max-width:720px;margin:0 auto;padding:0 20px}
+  header{padding:52px 0 6px}
+  .kicker{font-size:12px;letter-spacing:.15em;text-transform:uppercase;color:var(--coral);font-weight:700}
+  h1{font-family:var(--serif);font-size:clamp(30px,6.4vw,48px);line-height:1.06;margin:.28em 0 .22em;color:var(--ink);letter-spacing:-.01em}
+  .deck{font-size:19px;color:var(--muted);margin:0 0 14px}
+  .byline{font-size:13.5px;color:var(--muted)}
+  h2{font-family:var(--serif);font-size:25px;margin:38px 0 6px;color:var(--ink)}
+  p{margin:.8em 0;font-size:18px}
+  .lede{font-size:20px}
+  a{color:var(--teal-deep);text-decoration:none;border-bottom:1px solid color-mix(in srgb,var(--teal) 40%,transparent)}
+  a:hover{border-bottom-color:var(--teal)}
+  ul{padding-left:20px}
+  li{margin:8px 0;font-size:18px}
+  .pull{font-family:var(--serif);font-size:23px;line-height:1.3;color:var(--ink);margin:26px 0;padding-left:18px;border-left:3px solid var(--coral)}
+  .end{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:18px 20px;margin:34px 0 0;box-shadow:var(--shadow)}
+  .end b{color:var(--ink)}
+  hr{border:none;border-top:1px solid var(--line);margin:34px 0}
+  footer{border-top:1px solid var(--line);margin-top:44px;padding:22px 0 56px;color:var(--muted);font-size:13px}
+  /* shared project nav */
+  .sitenav{display:flex;flex-wrap:wrap;gap:6px;margin:20px 0 8px;padding:7px;border:1px solid var(--line);border-radius:13px;background:var(--card);box-shadow:var(--shadow)}
+  .sitenav a,.sitenav span{padding:8px 13px;border-radius:9px;font-size:13.5px;font-weight:600;white-space:nowrap;border-bottom:none}
+  .sitenav a{color:var(--teal);text-decoration:none}
+  .sitenav a:hover{background:color-mix(in srgb,var(--teal) 9%,transparent)}
+  .sitenav .cur{font-weight:800;color:var(--ink);background:color-mix(in srgb,var(--teal) 15%,transparent);box-shadow:inset 0 -2px 0 var(--teal)}
+  /* funnel diagram — pure CSS, no scripts */
+  .funnel{display:flex;flex-wrap:wrap;align-items:stretch;gap:10px;margin:28px 0;padding:16px;border:1px solid var(--line);border-radius:14px;background:var(--card);box-shadow:var(--shadow)}
+  .fstage{flex:1 1 130px;text-align:center;padding:14px 8px;border-radius:11px;background:color-mix(in srgb,var(--teal) 7%,transparent)}
+  .fstage.win{background:color-mix(in srgb,var(--good) 14%,transparent)}
+  .fnum{font-family:var(--serif);font-size:36px;font-weight:700;color:var(--ink);line-height:1}
+  .fstage.win .fnum{color:var(--good)}
+  .flabel{font-size:13px;color:var(--muted);margin-top:6px;line-height:1.35}
+  .flabel b{color:var(--ink)}
+  .farrow{display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center;font-size:10.5px;font-weight:800;letter-spacing:.04em;text-transform:uppercase;color:var(--coral);min-width:64px}
+  .farrow span{font-size:20px;color:var(--muted);line-height:1}
+  @media(max-width:560px){.funnel{flex-direction:column}.farrow{flex-direction:row;gap:8px;min-width:0;padding:2px 0}.farrow span{font-size:15px}}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header>
+  <div class="kicker">Show &amp; tell · the 3-minute version</div>
+  <h1>The condo that took 249 agents</h1>
+  <p class="deck">How I used a swarm of AI agents to do something totally mundane — book a vacation rental — and what it accidentally taught me about how people decide.</p>
+  <p class="byline"><b>Josh Gourneau</b> · 2026 · ~3 min read</p>
+</header>
+
+<nav class="sitenav" aria-label="Pages in this project">
+  <a href="./">📍 The plan</a>
+  <span class="cur" aria-current="page">✨ The story · 3 min</span>
+  <a href="planning-with-agents.html">📖 The long version · 7 min</a>
+  <a href="how-we-planned-maui.html">🛠 How we built it · 12 min</a>
+</nav>
+
+<p class="lede">I wanted to book a condo in Maui. Twelve nights, two people, a birthday. Under $3,500, an ocean view, and — the part that broke everything — a beach you could actually <em>swim</em> at. Soft sand, no rocks.</p>
+
+<p>That last one has no checkbox. No booking site has an "is the beach actually nice" field, and every listing swears its beach is perfect. So a task that sounds like ten minutes of clicking became a real search problem. I pointed a swarm of AI agents at it. It took <b>249 of them.</b></p>
+
+<h2>How it worked, in one breath</h2>
+
+<p>Instead of one assistant searching, I ran dozens in parallel — each hunting a different way: Airbnb, owner-direct sites, timeshares, independent beach guides. Then, for every "winner" they turned up, I ran a <em>second</em> wave of skeptic agents whose only job was to try to prove it wrong. Not rank it. Kill it.</p>
+
+<p class="pull">Searching gives you lots of plausible answers. Trying to disprove them is what leaves you with a true one.</p>
+
+<div class="funnel" aria-label="From a few hundred candidates down to one booking">
+  <div class="fstage">
+    <div class="fnum">~300</div>
+    <div class="flabel"><b>candidates</b><br>dozens of agents,<br>many search angles</div>
+  </div>
+  <div class="farrow">fan out<br>then refute<br><span>⇉</span></div>
+  <div class="fstage">
+    <div class="fnum">9</div>
+    <div class="flabel"><b>survivors</b><br>skeptic agents<br>killed the rest</div>
+  </div>
+  <div class="farrow">you<br>choose<br><span>✦</span></div>
+  <div class="fstage win">
+    <div class="fnum">1</div>
+    <div class="flabel"><b>booked</b><br>the one that<br>fit a life</div>
+  </div>
+</div>
+
+<h2>Three times, a winner died</h2>
+
+<ul>
+  <li>The top pick was already <b>booked</b> — we'd just checked too early. (Availability is a moment, not a fact.)</li>
+  <li>A listing said "oceanfront." It fronted a shelf of <b>lava rock.</b></li>
+  <li>The weird one: load a sold-out Airbnb with your dates in the web address and the site quietly shows you a <b>different property</b> — same page, real price, wrong place. One "owner-direct" link redirected to a condo nine miles away. The agents only caught it because a skeptic checked that the page it landed on was actually the place we asked for.</li>
+</ul>
+
+<h2>The part I didn't expect</h2>
+
+<p>My single most important rule — the $3,500 budget — I didn't say out loud until the agents had been working a while. It came out as an annoyed correction <em>after</em> I was shown something too expensive. My original written brief had actually said the budget was flexible. I'd told it the opposite of the truth.</p>
+
+<p>That's not me being sloppy. It's how people are. You often can't list what you want, but you know it the instant you see what you don't. We're great at "no, not that" and lousy at "here's my exact spec." Every time I rejected something, I was really teaching the system what I cared about.</p>
+
+<p>Which flips the whole thing on its head. The agents weren't a search engine. They were a cheap way to <b>discover what I wanted by bumping into what I didn't</b> — and <em>cheap</em> is the magic word. When re-searching costs a weekend, you commit early and settle. When it costs ten minutes, "I'll know it when I see it" stops being lazy and becomes the smart move.</p>
+
+<h2>Who actually decides</h2>
+
+<p>When the dust settled, nine genuinely-good options were left. Choosing between "beachfront" and "an extra room" and "$500" isn't math — there's no correct formula. So the agents did what agents are good at (enforce the facts: is it real, available, affordable, actually swimmable?) and I did the one thing only I could: pick what I value.</p>
+
+<p class="pull">249 agents narrowed a few hundred options down to nine. I picked the final one in about thirty seconds.</p>
+
+<p>We booked a roomy 1,000-square-foot place across the road from the best-rated soft-sand beach in the area, for $2,937. And here's the honest kicker: it wasn't the agents' <b>#1</b> recommendation. They'd ranked a beachfront splurge first and a cheaper place second — this was <b>#3</b> on their own shortlist. I overrode them for the one thing they couldn't score: I wanted the extra room and the better beach more than I wanted to step straight onto the sand. It was never the front-runner. It was just the last one standing — plus a human's taste. The whole army of agents cost less than one night of the stay.</p>
+
+<h2>The point</h2>
+
+<p>You can now aim a small army of tireless, skeptical researchers at the most boring decisions in your life, and have them do the parts people are bad at — being exhaustive, and being suspicious — while you do the part only you can. That's a genuinely new thing, and it's kind of wonderful.</p>
+
+<div class="end">
+  <b>Want more?</b>
+  <ul style="margin:.5em 0 0">
+    <li><a href="planning-with-agents.html">📖 The long version</a> — the full walk-through, same story with all the detail (~7 min).</li>
+    <li><a href="how-we-planned-maui.html">🛠 How we built it</a> — the technical deep-dive: the tools, the workflows, the philosophy (~12 min).</li>
+    <li><a href="./">📍 The trip plan itself</a> — the actual dossier the agents produced.</li>
+  </ul>
+</div>
+
+<footer>
+  Built with Claude Code (Opus 4.8), a browser that tells the truth, and a healthy distrust of the word "oceanfront." Total agent spend: less than one night's stay.
+</footer>
+
+</div>
+</body>
+</html>

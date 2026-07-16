@@ -1,0 +1,522 @@
+<!doctype html>
+<!-- How We Planned Maui With 249 AI Agents · write-up · 2026-07-10 -->
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>249 Agents to Book One Condo — how we planned a Maui trip with an agent swarm</title>
+<meta name="description" content="We spent 17 multi-agent workflows and 249 agent runs booking a single Maui condo. Here's the harness, the MCPs, the adversarial-verification pattern, and everything that broke.">
+<style>
+  :root{
+    --paper:#f4f1ea; --card:#fefcf7; --ink:#1f262a; --sand:#ece5d6; --line:#e4dccd;
+    --muted:#6f7168; --text:#242b27; --teal:#0e6b63; --teal-deep:#0a4f49;
+    --coral:#d3562a; --good:#2c7a54; --warn:#8f6316; --warn-bg:#f1e8d3;
+    --code-bg:#f7f3ea; --code-ink:#2b3a36;
+    --shadow:0 1px 2px rgba(31,38,42,.05),0 10px 30px rgba(31,38,42,.07);
+    --serif:"Iowan Old Style","Palatino Linotype","Book Antiqua",Palatino,Georgia,serif;
+    --sans:system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+    --mono:ui-monospace,"SF Mono","Cascadia Code",Menlo,Consolas,monospace;
+  }
+  @media (prefers-color-scheme:dark){:root{
+    --paper:#0e1417; --card:#151c1f; --ink:#eef1ea; --sand:#1b2a2b; --line:#26343a;
+    --muted:#98a29a; --text:#dde6df; --teal:#46b3a8; --teal-deep:#63c6ba;
+    --coral:#f0764c; --good:#5cd196; --warn:#e4b155; --warn-bg:#2a2313;
+    --code-bg:#0f1719; --code-ink:#cfe0d8;
+    --shadow:0 1px 2px rgba(0,0,0,.4),0 12px 34px rgba(0,0,0,.38);
+  }}
+  :root[data-theme="light"]{--paper:#f4f1ea;--card:#fefcf7;--ink:#1f262a;--line:#e4dccd;--muted:#6f7168;--text:#242b27;--teal:#0e6b63;--teal-deep:#0a4f49;--coral:#d3562a;--good:#2c7a54;--warn:#8f6316;--warn-bg:#f1e8d3;--code-bg:#f7f3ea;--code-ink:#2b3a36;}
+  :root[data-theme="dark"]{--paper:#0e1417;--card:#151c1f;--ink:#eef1ea;--line:#26343a;--muted:#98a29a;--text:#dde6df;--teal:#46b3a8;--teal-deep:#63c6ba;--coral:#f0764c;--good:#5cd196;--warn:#e4b155;--warn-bg:#2a2313;--code-bg:#0f1719;--code-ink:#cfe0d8;}
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--paper);color:var(--text);font-family:var(--sans);line-height:1.62;-webkit-text-size-adjust:100%}
+  .wrap{max-width:760px;margin:0 auto;padding:0 20px}
+  header{padding:56px 0 10px;border-bottom:1px solid var(--line);margin-bottom:8px}
+  .kicker{font-size:12px;letter-spacing:.15em;text-transform:uppercase;color:var(--coral);font-weight:700}
+  h1{font-family:var(--serif);font-size:clamp(30px,6.4vw,50px);line-height:1.05;margin:.28em 0 .2em;color:var(--ink);letter-spacing:-.01em}
+  .deck{font-size:19px;color:var(--muted);margin:0 0 18px}
+  .byline{font-size:13.5px;color:var(--muted);padding-bottom:22px}
+  h2{font-family:var(--serif);font-size:30px;margin:46px 0 4px;color:var(--ink);letter-spacing:-.01em}
+  h3{font-family:var(--serif);font-size:21px;margin:28px 0 2px;color:var(--ink)}
+  p{margin:.75em 0}
+  .lede{font-size:19.5px}
+  a{color:var(--teal-deep);text-decoration:none;border-bottom:1px solid color-mix(in srgb,var(--teal) 40%,transparent)}
+  a:hover{border-bottom-color:var(--teal)}
+  .stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:12px;margin:26px 0}
+  .stat{background:var(--card);border:1px solid var(--line);border-radius:13px;padding:14px 14px;box-shadow:var(--shadow)}
+  .stat b{display:block;font-family:var(--serif);font-size:30px;color:var(--ink);line-height:1.1}
+  .stat span{font-size:12.5px;color:var(--muted)}
+  pre{background:var(--code-bg);color:var(--code-ink);border:1px solid var(--line);border-radius:12px;padding:16px 16px;overflow-x:auto;font-family:var(--mono);font-size:13px;line-height:1.55;margin:18px 0}
+  code{font-family:var(--mono);font-size:.92em;background:var(--code-bg);padding:1.5px 5px;border-radius:5px;border:1px solid var(--line)}
+  pre code{background:none;border:none;padding:0}
+  .scroll{overflow-x:auto}
+  table{width:100%;border-collapse:collapse;font-size:14.5px;margin:14px 0}
+  th,td{text-align:left;padding:9px 10px;border-bottom:1px solid var(--line);vertical-align:top}
+  th{font-size:11.5px;letter-spacing:.05em;text-transform:uppercase;color:var(--muted);font-weight:700}
+  .callout{background:var(--card);border:1px solid var(--line);border-left:4px solid var(--coral);border-radius:12px;padding:16px 18px;margin:22px 0;box-shadow:var(--shadow)}
+  .callout.win{border-left-color:var(--good)}
+  .lesson{background:var(--card);border:1px solid var(--line);border-radius:13px;padding:16px 18px;margin:16px 0;box-shadow:var(--shadow)}
+  .lesson h3{margin-top:0}
+  .lesson .tag{display:inline-block;font-size:11px;font-weight:800;letter-spacing:.05em;text-transform:uppercase;color:var(--warn);background:var(--warn-bg);padding:3px 8px;border-radius:6px;margin-bottom:6px}
+  ul{padding-left:22px}
+  li{margin:6px 0}
+  hr{border:none;border-top:1px solid var(--line);margin:44px 0}
+  /* flow diagram — no JS, no CDN */
+  .flow{margin:24px 0}
+  .fstep{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:11px 14px;box-shadow:var(--shadow);position:relative;margin-bottom:26px}
+  .fstep:after{content:"↓";position:absolute;left:50%;bottom:-24px;transform:translateX(-50%);color:var(--muted);font-size:16px;line-height:1}
+  .fstep:last-child:after{content:none}
+  .fstep b{display:block;font-family:var(--serif);font-size:17px;color:var(--ink)}
+  .fstep span{font-size:13.5px;color:var(--muted)}
+  .fstep.fan{border-left:4px solid var(--teal)}
+  .fstep.atk{border-left:4px solid var(--coral)}
+  .fstep.human{border-left:4px solid var(--good)}
+  .fsplit{display:flex;gap:10px;margin-bottom:26px;position:relative}
+  .fsplit:after{content:"↓";position:absolute;left:50%;bottom:-24px;transform:translateX(-50%);color:var(--muted);font-size:16px}
+  .fsplit span{flex:1;text-align:center;font-size:13px;font-weight:700;padding:8px;border-radius:10px;border:1px solid var(--line)}
+  .fsplit .kill{color:var(--coral)}
+  .fsplit .live{color:var(--good)}
+  /* constraint timeline */
+  .tl{margin:22px 0}
+  .tlrow{display:grid;grid-template-columns:minmax(0,1fr) 46px;gap:10px;align-items:center;margin:7px 0}
+  .tlbar{position:relative;height:26px;background:var(--sand);border-radius:6px;overflow:hidden}
+  .tlfill{position:absolute;inset:0 auto 0 0;background:color-mix(in srgb,var(--teal) 30%,transparent);border-right:2px solid var(--teal)}
+  .tlrow.late .tlfill{background:color-mix(in srgb,var(--coral) 28%,transparent);border-right-color:var(--coral)}
+  .tllabel{position:absolute;left:9px;top:0;line-height:26px;font-size:12.5px;font-weight:600;color:var(--ink);white-space:nowrap;z-index:1}
+  .tlnum{font-size:12.5px;color:var(--muted);font-variant-numeric:tabular-nums;text-align:right}
+  @media(max-width:560px){.tllabel{font-size:11px}}
+  footer{border-top:1px solid var(--line);margin-top:52px;padding:24px 0 60px;color:var(--muted);font-size:13px}
+  .muted{color:var(--muted)}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header>
+  <div class="kicker">Field notes · agent engineering</div>
+  <h1>249 agents to book one condo</h1>
+  <p class="deck">We used a swarm of AI subagents, six MCP servers, and a lot of adversarial skepticism to plan a 12-night Maui trip. The agents didn't find the answer. They destroyed the wrong ones.</p>
+  <div class="byline">Josh Gourneau · July 2026 · ~9 min read</div>
+</header>
+
+<nav aria-label="Pages in this project" style="display:flex;flex-wrap:wrap;gap:6px;margin:20px 0 8px;padding:7px;border:1px solid var(--line);border-radius:13px;background:var(--card)">
+  <a href="./" style="padding:8px 13px;border-radius:9px;font-size:13.5px;font-weight:600;white-space:nowrap;color:var(--teal);text-decoration:none;border-bottom:none">📍 The plan</a>
+  <a href="story.html" style="padding:8px 13px;border-radius:9px;font-size:13.5px;font-weight:600;white-space:nowrap;color:var(--teal);text-decoration:none;border-bottom:none">✨ The story · 3 min</a>
+  <a href="planning-with-agents.html" style="padding:8px 13px;border-radius:9px;font-size:13.5px;font-weight:600;white-space:nowrap;color:var(--teal);text-decoration:none;border-bottom:none">📖 The long version · 7 min</a>
+  <span style="padding:8px 13px;border-radius:9px;font-size:13.5px;font-weight:800;white-space:nowrap;color:var(--ink);background:color-mix(in srgb,var(--teal) 15%,transparent);box-shadow:inset 0 -2px 0 var(--teal)" aria-current="page">🛠 How we built it · 12 min</span>
+</nav>
+
+<p class="lede">The goal was almost embarrassingly simple: two people, twelve nights on Maui, celebrating a birthday. Under $3,500 for housing. An ocean view. And a beach you could actually <em>swim</em> at — soft sand, no rocks.</p>
+
+<p>That last constraint is the whole story. It's not a field in any database. No listing will ever tell you its beach is rocky. And it turned a weekend of browsing into a genuinely hard search problem — one that ended up consuming <strong>17 multi-agent workflows, 249 agent runs, and 41 shipped versions</strong> of a self-updating trip dossier.</p>
+
+<div class="stats">
+  <div class="stat"><b>249</b><span>agent runs</span></div>
+  <div class="stat"><b>17</b><span>workflows</span></div>
+  <div class="stat"><b>1.5M+</b><span>subagent tokens</span></div>
+  <div class="stat"><b>41</b><span>versions shipped</span></div>
+  <div class="stat"><b>3</b><span>picks killed</span></div>
+</div>
+
+<p>Three separate times, a "winner" was crowned, written into the plan, and published. Three times, a skeptic agent tore it down: one was <em>already booked</em>. One was "oceanfront" onto a shelf of lava rock. One had an owner-direct link that quietly <code>301</code>'d to a different condo nine miles up the coast, so the "verified price" we'd been quoting was for a property that didn't exist at that URL.</p>
+
+<p>The unit we finally booked was never the front-runner. Total cost of the exercise: less than one night of the condo. Here's the whole machine.</p>
+
+<hr>
+
+<h2>The stack</h2>
+
+<p>Everything ran inside <strong>Claude Code</strong> (Opus 4.8) as the orchestrator. The interesting part isn't the model — it's what it was allowed to touch.</p>
+
+<div class="scroll">
+<table>
+  <thead><tr><th>Tool</th><th>What it did</th><th>Why it mattered</th></tr></thead>
+  <tbody>
+    <tr><td><b>Airbnb MCP</b></td><td><code>airbnb_search</code>, <code>airbnb_listing_details</code></td><td>Structured listing data — but <em>not</em> trustworthy for availability (see below)</td></tr>
+    <tr><td><b>Claude in Chrome</b></td><td>Real browser automation: navigate, read DOM, read console</td><td>The only way to get true availability + checkout-page totals. Airbnb 403s plain fetches.</td></tr>
+    <tr><td><b>DirectBooker MCP</b></td><td>Live hotel rates, book-direct links</td><td>Answered "are hotels actually cheaper?" with real numbers</td></tr>
+    <tr><td><b>TripAdvisor MCP</b></td><td>Ratings, review counts, cross-check pricing</td><td>Independent second source on hotels</td></tr>
+    <tr><td><b>Nominatim</b> (OSM)</td><td>Geocoding condo addresses → lat/lng</td><td>Mapping. Also caught one badly geocoded address.</td></tr>
+    <tr><td><b>Web search + fetch</b></td><td>Independent beach guides, surf reports, jellyfish calendars</td><td>The ground truth listings never provide</td></tr>
+    <tr><td><b>Git + scp/nginx</b></td><td>Version + deploy the dossier on every change</td><td>The artifact <em>is</em> the deliverable</td></tr>
+  </tbody>
+</table>
+</div>
+
+<h2>The pattern: fan out, then attack</h2>
+
+<p>The naive approach is to ask an LLM to search harder. That produces more plausible-sounding candidates, not more <em>true</em> ones. What actually worked was a two-phase shape, repeated over and over:</p>
+
+<p><strong>1. Fan out.</strong> Spawn N agents in parallel, each with a different search angle — one hunts owner-direct sites, one hunts Airbnb, one hunts timeshares, one hunts beach guides. Each returns a <em>schema-validated</em> object, not prose.</p>
+
+<p><strong>2. Attack.</strong> For every candidate that survives, spawn skeptics whose only job is to <em>refute</em> it. Not "evaluate" — refute. Default to rejection when uncertain.</p>
+
+<div class="flow">
+  <div class="fstep"><b>Constraint spec</b><span>hard filters — fail one, you're dead</span></div>
+  <div class="fstep fan"><b>Fan out ⇉</b><span>N finders, parallel, orthogonal sources · one constructs the <em>missing column</em></span></div>
+  <div class="fstep"><b>Candidates</b><span>schema-validated objects, not prose</span></div>
+  <div class="fstep atk"><b>Adversarial verify ⚔</b><span>K skeptics per candidate · prompted to <em>refute</em> · uncertainty ⇒ reject</span></div>
+  <div class="fsplit"><span class="kill">✕ killed</span><span class="live">✓ survivors</span></div>
+  <div class="fstep"><b>Prove the negative</b><span>sweep adjacent categories so "best" is a finding, not an assumption</span></div>
+  <div class="fstep"><b>Synthesize → artifact</b><span>then <em>audit the artifact</em> for self-contradiction, loop back</span></div>
+  <div class="fstep"><b>Re-verify at commit time</b><span>availability &amp; price are perishable</span></div>
+  <div class="fstep human"><b>Human decides</b><span>agents narrow, humans choose</span></div>
+</div>
+
+<p>Here is the verify phase, verbatim from the file that ran (trimmed for length — the prompt was longer). It's JavaScript because the workflow runtime executes plain JS in a sandbox; this is not pseudocode:</p>
+
+<pre><code>// verify-kamaole.js — executed by the Workflow runtime
+export const meta = {
+  name: 'verify-kamaole-winners',
+  description: 'Adversarially confirm the 3 finalists before crowning one',
+  phases: [{ title: 'Verify', detail: 'refute each candidate' }],
+}
+
+const CANDS = [
+  { key: 'Royal Mauian',              room: '50815427', claim: 'BEACHFRONT on Kamaole I, full ocean view, ~$3,423 all-in…' },
+  { key: 'Kamaole Beach Royale #204', room: '21244792', claim: 'ocean-view lanai, ~3-min walk to Kam I soft sand, ~$2,556…' },
+  { key: 'Maui Kamaole I-118',        room: '22531397', claim: 'ocean-view lanai (filtered), Keawakapu ~5-10 min, ~$2,970…' },
+]
+
+phase('Verify')
+const verdicts = await parallel(CANDS.map(c => () =>
+  agent(
+    `Adversarially verify this condo before we crown it.
+     Dates: 2026-07-25 -> 2026-08-06, 2 adults.
+     CLAIM TO TEST: ${c.claim}
+
+     Try to REFUTE each of these. Report what you actually find:
+     1) AVAILABLE for the exact dates? (active Reserve button?)
+     2) REAL ocean view from the unit? (photo/amenity evidence, not marketing fluff)
+     3) Exact ALL-IN price incl. Hawaii tax ~17-19%. Is it truly <= $3,500?
+     4) Nearest soft-SWIMMABLE sand + walk time. Rocky? Murky?
+     5) Red flags: construction, for-sale showings, no kitchen.
+
+     Final verdict: CONFIRMED (claims hold) or PROBLEM (what breaks).`,
+    {
+      label: `verify:${c.room}`,
+      phase: 'Verify',
+      schema: {
+        type: 'object', additionalProperties: false,
+        required: ['verdict','availableDates','oceanView','allInPrice','underCap','beach','redFlags'],
+        properties: {
+          verdict:        { type:'string', enum:['CONFIRMED','PROBLEM'] },
+          oceanView:      { type:'string', enum:['yes','partial','no','unknown'] },
+          underCap:       { type:'string', enum:['yes','no','unknown'] },
+          availableDates: { type:'string' },
+          allInPrice:     { type:'string' },
+          beach:          { type:'string' },
+          redFlags:       { type:'string' },
+        },
+      },
+    }
+  )
+))
+// → all three came back CONFIRMED. Two came back oceanView: 'partial'.</code></pre>
+
+<p>That last line is the point. The <code>enum</code> on <code>oceanView</code> is doing quiet, load-bearing work: it denies an agent the option of writing <em>"stunning ocean vistas!"</em> and forces it to pick one of four words. Two finalists whose listings both said "ocean view" resolved to <code>partial</code> — a strip of blue over a neighbor's roof, and a lanai filtered through landscaping. Free-text output would have laundered both into a yes.</p>
+
+<p class="muted">The same shape as Mermaid, if you want to steal it:</p>
+
+<pre><code>flowchart TD
+  A[Constraint spec: hard filters] --> B{Fan out}
+  B --> F1[Finder: marketplace API]
+  B --> F2[Finder: owner-direct]
+  B --> F3[Finder: adjacent categories]
+  B --> F4[Finder: independent sources<br/>construct the missing column]
+  F1 & F2 & F3 & F4 --> C[Candidates<br/>schema-validated]
+  C --> D{Adversarial verify<br/>refute by default}
+  D -->|PROBLEM| X[Killed]
+  D -->|CONFIRMED| S[Survivors]
+  S --> N[Prove the negative]
+  N --> R[Synthesize -> artifact]
+  R --> AU{Staleness audit}
+  AU -->|contradiction| R
+  AU -->|clean| RV[Re-verify at commit time]
+  RV --> H([Human decides])</code></pre>
+
+<div class="callout win">
+  <b>The counterintuitive result:</b> adversarial verification eliminated more bad picks than additional searching ever found good ones. Search is cheap and abundant. <em>Disproof</em> is the scarce resource.
+</div>
+
+<h2>What actually broke</h2>
+
+<p>This is the part worth reading. Every one of these cost us a crowned winner.</p>
+
+<div class="lesson">
+  <span class="tag">Killed pick #1</span>
+  <h3>The listing was already booked</h3>
+  <p>We crowned a beachfront unit, wrote it into the plan, and shipped. A later 19-agent availability re-check found it was <strong>booked</strong> — and had been for a while. So had our backup.</p>
+  <p class="muted"><b>Lesson:</b> availability is not a property of a listing. It's a property of a <em>moment</em>. Re-verify at decision time, not search time.</p>
+</div>
+
+<div class="lesson">
+  <span class="tag">Killed pick #2</span>
+  <h3>Airbnb silently redirects unavailable listings</h3>
+  <p>Load a sold-out listing with dates in the URL and Airbnb quietly serves you <em>a different property</em> — same page shape, different unit, real price. A scraper happily reports that price as the original unit's. We got burned twice before we detected it.</p>
+  <p>Worse: an owner-direct site (<code>mauiownercondos.com/listing/68</code>) 301-redirected to an entirely different condo on a different beach, 9 miles away. Our "verified $2,925 owner-direct price" was for a unit that didn't exist at that URL.</p>
+  <p class="muted"><b>Lesson:</b> always assert that the page you landed on <em>is the thing you asked for</em>. Check the title, the coordinates, the room ID. A 200 OK means nothing.</p>
+</div>
+
+<div class="lesson">
+  <span class="tag">Killed pick #3</span>
+  <h3>"Oceanfront" means the building touches the ocean. Not that you can swim.</h3>
+  <p>One finalist was genuinely oceanfront — fronting a shelf of <strong>lava rock</strong>. Another had "ocean views" that turned out to be a strip of blue visible over a neighbor's roof. A third sat on soft sand whose water runs murky and silty because it's next to a pond outlet.</p>
+  <p>The fix was to stop reading listings entirely for this dimension. We cross-referenced every property's <em>coordinates</em> against independent beach guides and review corpora, and built our own ranking: Keawakapu ≈ Kamaʻole I/II (soft, calm, sandy-bottom) &gt; Kamaʻole III &gt; Charley Young &gt; Sugar Beach (soft to walk, murky to swim).</p>
+  <p class="muted"><b>Lesson:</b> when the deciding attribute isn't in the data, the job isn't search — it's <em>constructing the missing column</em>.</p>
+</div>
+
+<div class="lesson">
+  <span class="tag">Self-inflicted</span>
+  <h3>The artifact lied to itself</h3>
+  <p>After enough iterations, the dossier contradicted itself: the hero section crowned a unit flagged <em>disqualified</em> three sections down, while a booking checklist told you to buy a $6,204 condo that violated the stated $3,500 cap. Nobody wrote that bug. It accreted.</p>
+  <p>We fixed it with an 8-agent <strong>staleness audit</strong>: chunk the document, give each agent the current ground truth, and ask "what in your chunk contradicts this?"</p>
+  <p class="muted"><b>Lesson:</b> a long-lived generated artifact needs a consistency checker as much as any codebase needs tests.</p>
+</div>
+
+<div class="lesson">
+  <span class="tag">Ops scars</span>
+  <h3>Three small ones that cost real time</h3>
+  <ul>
+    <li><b>Never <code>perl -pi</code> a UTF-8 file</b> with wide-char replacements. It double-encoded the entire document — every emoji and ʻokina turned to mojibake. Python with explicit <code>encoding='utf-8'</code>, always.</li>
+    <li><b>SRI hashes silently kill CDN scripts.</b> An <code>integrity=</code> attribute that doesn't byte-match makes the browser block the script with no console error you'd notice. Our custom map rendered as an empty box.</li>
+    <li><b>Embedded maps get blocked</b> by extensions and ad-blockers. We shipped a beautiful Leaflet map with per-listing pins, then replaced it with plain "open in Google Maps" links. Boring beats clever when the failure mode is a blank rectangle.</li>
+  </ul>
+</div>
+
+<h2>Proving the negative</h2>
+
+<p>Late in the process came the best question of the whole project: <em>"Is a condo really the best value? Is there nothing else?"</em></p>
+
+<p>This is exactly the question a search engine can't answer, because it requires exhausting a space rather than ranking within one. So: six agents, one per lodging category, all pricing live for the exact dates.</p>
+
+<div class="scroll">
+<table>
+  <thead><tr><th>Category</th><th class="num">Best found</th><th>Why it lost</th></tr></thead>
+  <tbody>
+    <tr><td>Timeshare weeks</td><td>~$5,571</td><td>Sat–Sat blocks force a 14-night two-week stitch for a 12-night trip</td></tr>
+    <tr><td>Whole house near a swim beach</td><td>$4,200–6,900</td><td>Over budget; cheap cottages sit far from soft sand</td></tr>
+    <tr><td>Hotel + car bundle</td><td>~$3,272+</td><td>Marks up the <em>same condo class</em>, and isn't beachfront</td></tr>
+    <tr><td>Book a month (28-night discount)</td><td>~$4,700–5,000</td><td>Monthly discount is only 10–13% — nowhere near 16 free nights</td></tr>
+    <tr><td>Glamping / North-Shore cottage</td><td>$2,682</td><td>Romantic and cheap, but the swim beach is a 20-minute drive</td></tr>
+  </tbody>
+</table>
+</div>
+
+<p>Verdict: the condo wins, and now we know <em>why</em> — it's the only category that satisfies ocean view <em>and</em> soft swimmable sand <em>and</em> a whole private place under the cap. Every cheaper option drops one leg. That's a far more useful answer than "here are 40 listings."</p>
+
+<h2>What we booked</h2>
+
+<div class="callout win">
+  <p style="margin-top:0"><b>Maui Kamaole I-118</b> — 1BR/2BA, 1,000 sq ft, two lanais, full kitchen, A/C.<br>
+  <b>$2,937 all-in</b> for 12 nights (Hawaii tax included, no cleaning fee). 4.92★ / 185 reviews, Guest Favorite.<br>
+  Directly across the road from <b>Keawakapu</b> — the highest-rated soft-swim beach in South Maui (4.8★, 570 reviews).</p>
+  <p style="margin-bottom:0">It was never the crowned pick — the agents ranked it <b>third</b> on their own shortlist, behind a beachfront splurge and a cheaper unit. But once the swarm had eliminated everything that couldn't survive scrutiny, a human looked at the nine survivors and <em>overrode the ranking</em>: space + the best water over paying $500 more to stand on sand ten seconds sooner. Which is exactly the call the machine couldn't make for me — it can rank facts, but it can't weigh what a birthday is worth.</p>
+</div>
+
+<p>That's the division of labor I'd defend: <strong>agents narrow, humans decide.</strong> The machine's job was never to pick. It was to guarantee that every option still standing was real, bookable, honestly priced, and actually met the constraints. Nine survivors out of a few hundred candidates. The final call took thirty seconds.</p>
+
+<hr>
+
+<h2>The human in the loop: a fair post-mortem</h2>
+
+<p>It would be dishonest to write this up as though the machine did the work and the human supervised. I went back through the logs. <strong>59 turns.</strong> Here is when each hard constraint — the filters that ultimately decided everything — actually got stated:</p>
+
+<div class="tl">
+  <div class="tlrow"><div class="tlbar"><div class="tlfill" style="width:1.7%"></div><span class="tllabel">"Plan the trip"</span></div><div class="tlnum">turn 1</div></div>
+  <div class="tlrow"><div class="tlbar"><div class="tlfill" style="width:41%"></div><span class="tllabel">Must see &amp; hear the ocean</span></div><div class="tlnum">24</div></div>
+  <div class="tlrow"><div class="tlbar"><div class="tlfill" style="width:42%"></div><span class="tllabel">Flights are $0 — cost model reset</span></div><div class="tlnum">25</div></div>
+  <div class="tlrow late"><div class="tlbar"><div class="tlfill" style="width:68%"></div><span class="tllabel">Walk to the beach, no stairs</span></div><div class="tlnum">40</div></div>
+  <div class="tlrow late"><div class="tlbar"><div class="tlfill" style="width:75%"></div><span class="tllabel">Soft sand. "The rocks are not good."</span></div><div class="tlnum">44</div></div>
+  <div class="tlrow late"><div class="tlbar"><div class="tlfill" style="width:80%"></div><span class="tllabel">$3,500 hard cap on housing</span></div><div class="tlnum">47</div></div>
+  <div class="tlrow late"><div class="tlbar"><div class="tlfill" style="width:83%"></div><span class="tllabel">Two weeks only · must see ocean</span></div><div class="tlnum">49</div></div>
+  <div class="tlrow late"><div class="tlbar"><div class="tlfill" style="width:86%"></div><span class="tllabel">Final dates locked</span></div><div class="tlnum">51</div></div>
+</div>
+
+<p>The budget cap — the single most decisive filter in the entire project — arrived on <strong>turn 47 of 59</strong>, and it arrived as an accusation: <em>"bro you lost the price goals the winner is out of my price range."</em> The number had been in the user's head the whole time. It had never once been in a prompt.</p>
+
+<p>Three of the four hard filters were discovered the same way: by <em>rejecting a finished answer</em>. Each rejection invalidated a completed research pass. The dates changed five times, and in travel every price and every availability check is keyed on dates — so each change silently rotted every number in the document.</p>
+
+<h3>What that cost</h3>
+<ul>
+  <li><b>Anger is not a spec.</b> "You lost the price goals" carries the same information as "hard cap: $3,500 housing" and arrives ten workflows later. One is a feeling; the other is a filter.</li>
+  <li><b>Decorating before validating.</b> Turns were spent on a "bouginess slider," image thumbnails, sortable tables, and a wide-screen layout — while the crowned recommendation was simultaneously <em>over budget, without an ocean view, and in one case already booked</em>. Polish applied to a wrong answer is worse than no polish: it makes the wrong answer look trustworthy.</li>
+  <li><b>Global rewrites for local problems.</b> "This is too much info, boil it down" triggered a teardown from 26 sections to 6. The very next message: <em>"oh that is like maybe not enough now."</em> The actual desire — "put a summary on top, keep the detail below" — would have been one edit.</li>
+  <li><b>Burying the simple answer.</b> The map thread ran four turns and three implementations (embedded Google, custom Leaflet pins, then links). The user proposed the winning solution themselves, mid-thread: <em>"or just make it simple and link to the google map in a link column."</em> That was available on turn one.</li>
+</ul>
+
+<h3>What the human got right — and it's the good stuff</h3>
+<ul>
+  <li><b>The single best idea in the project was theirs, not the machine's.</b> "The listing doesn't have to say it has sandy beaches — you could cross-reference with other known good beaches." That reframed the task from <em>ranking listings</em> to <em>constructing the column nobody had</em>. Everything downstream depends on it.</li>
+  <li><b>"Don't waste my time with listings that are already booked."</b> This forced the availability re-check that discovered the crowned pick was, in fact, booked. That one sentence saved the trip.</li>
+  <li><b>"Is it really only condos? Is there nothing else?"</b> Demanding proof of the negative when you already have an answer you like is rare and expensive and correct.</li>
+  <li><b>"I'm logged into CostcoTravel.com now if you want to use the browser."</b> Recognizing that authentication is the one thing the agent cannot do, and supplying it. That's sophisticated collaboration, not prompting.</li>
+  <li><b>"Burn my tokens, I don't like waiting."</b> Correct resource intuition: agent time is cheap and parallel, wall-clock is neither.</li>
+  <li><b>Never letting the machine buy anything.</b> Links only, human at the checkout. Every time.</li>
+</ul>
+
+<div class="callout">
+  <b>And the machine's failures were symmetrical.</b> It crowned three picks it hadn't verified. It over-engineered a map nobody asked for. It let version stamps rot four versions behind. Most damningly: <em>it never once demanded the constraints up front.</em> A good agent should open by refusing to search until it has the hard filters and the ceiling. This one cheerfully optimized the wrong objective for forty turns.
+</div>
+
+<hr>
+
+<h2>You don't know what you want until you see what you don't</h2>
+
+<p>Turn 44 of this project is one sentence long:</p>
+
+<p style="font-family:var(--serif);font-size:23px;color:var(--ink);margin:20px 0 20px 0;padding-left:18px;border-left:3px solid var(--coral)">"The rocks are not good."</p>
+
+<p>Before that sentence, "soft sand" was not a requirement. After it, it was <em>the</em> requirement — the one that ultimately decided everything, invalidated three prior workflows, and forced us to build a dataset that doesn't exist anywhere. The constraint did not exist, and then it did. A counterexample conjured it.</p>
+
+<p>This is not a story about a user who failed to write good requirements. It's a fact about people, and once you take it seriously it changes how you build the tool.</p>
+
+<h3>Preferences are constructed, not retrieved</h3>
+
+<p>Justice Potter Stewart's <em>"I know it when I see it"</em> (<em>Jacobellis v. Ohio</em>, 1964) gets quoted as a punchline about judicial laziness. It's actually an accurate report of how categorization works for concepts that resist definition by necessary-and-sufficient conditions — what Wittgenstein called <strong>family resemblance</strong>. "A good beach" has no definition. It has exemplars.</p>
+
+<p>Decision researchers have the harder-nosed version. Paul Slovic's line of work on <em>the construction of preference</em> holds that people don't read values off a stable internal utility function; they <strong>build one at the moment of choice</strong>, and the construction depends on what they're shown and how it's framed. Ask someone to specify what they want and you get a lossy, partial reconstruction. Show them a violation and you get an instant, confident, correct rejection.</p>
+
+<p>Which yields the asymmetry the whole harness should be designed around:</p>
+
+<p style="font-family:var(--serif);font-size:21px;color:var(--ink);margin:18px 0;padding-left:18px;border-left:3px solid var(--teal)">Recognition is cheap and reliable. Specification is expensive and lossy. Rejections are high-bandwidth.</p>
+
+<h3>This is RLHF, done by hand</h3>
+
+<p>Here's the part that should feel uncomfortable to anyone who's trained a model. The user could not write down their objective function. Neither could the agent. But the user could reliably <em>label</em> a candidate as bad, and say roughly why.</p>
+
+<p>So what we ran, for 59 turns, was online preference learning from negatives. Each rejection was a comparison label. The "locked constraint table" was a reward model, fitted incrementally, badly, and mostly from things the user hated. RLHF exists for exactly the same reason "gather the requirements" fails in the first place: <strong>for the things that matter most, humans can evaluate but not specify.</strong> We built a whole industry on that asymmetry and then act surprised when it shows up in a condo search.</p>
+
+<h3>Why this only became viable recently</h3>
+
+<p>Stigler's 1961 <em>The Economics of Information</em> gives the boring, correct frame: optimal search depth is a function of the marginal cost of <em>one more query</em>. When each iteration costs you a weekend of browsing tabs, the rational play is to commit early to a spec you haven't tested — or to satisfice in Simon's sense and stop at "good enough, I'm tired."</p>
+
+<p>Collapse the cost of an iteration to ten minutes and a few hundred thousand tokens, and the calculus inverts. <em>"I'll know it when I see it"</em> stops being an unaffordable luxury and becomes the <strong>efficient strategy</strong>.</p>
+
+<div class="callout win">
+  <b>The product isn't the search.</b> It's making iteration cheap enough that preference construction can happen <em>inside the loop</em>, instead of being something you're supposed to have finished before you start.
+</div>
+
+<p>Which also gives the fix. If people can't state constraints but can recognize violations, then <strong>stop asking and start showing.</strong> Before any expensive search, spend ~1% of the budget generating five deliberately diverse candidates — the cheapest thing that qualifies, the extravagant one, one that's perfect-but-for-a-flaw, one that's just weird — and ask a single question: <em>"which of these are wrong, and what makes them wrong?"</em></p>
+
+<p>That probe, run on turn 3, surfaces a $3,500 ceiling and a rock allergy. We surfaced them on turn 47. It's now Step 0 of the skill.</p>
+
+<h3>The hazard nobody warns you about</h3>
+
+<p>Cheap generation makes mis-specification <em>more</em> dangerous, not less. An agent will pursue a stated objective with superhuman efficiency and hand you a confidently wrong answer, beautifully typeset. We lived this: for about twenty turns the dossier was a gorgeous, sortable, thumbnail-rich, dark-mode-aware monument to a recommendation that was over budget and had no ocean view. Goodhart's law with better typography.</p>
+
+<p>And the failure is self-reinforcing, because <strong>a polished artifact teaches you to want what it found.</strong> Anchoring plus the persuasive authority of good design. Left unchecked, the tool stops helping you discover your preferences and starts manufacturing them.</p>
+
+<p>Verification is the only thing standing between those two outcomes. Which is why "verify before you decorate" is a moral instruction, not a style guide.</p>
+
+<h3>Where the human is not replaceable</h3>
+
+<p>Once every hard constraint is satisfied, look at what's actually left. Nine survivors. Beachfront-on-Kamaʻole-I at $3,423, versus 1,000 square feet across the road from a better beach at $2,937. Which is correct?</p>
+
+<p>Neither. There is no exchange rate between "steps onto sand" and "an extra room" and "$486." These are <strong>incommensurable goods</strong>, and any weighted score that pretends to rank them is just someone's opinion wearing a lab coat. (Arrow has a theorem about this mood.)</p>
+
+<p>So the division of labor isn't a hedge about AI safety. It falls out of the structure of the problem:</p>
+
+<p style="font-family:var(--serif);font-size:23px;color:var(--ink);margin:20px 0;padding-left:18px;border-left:3px solid var(--good)">Agents enforce facts. Humans adjudicate values.</p>
+
+<p>Constraints are factual, verifiable, and therefore delegable — <em>is it available, is it under $3,500, is the sand actually soft.</em> Tradeoffs among <em>satisfied</em> constraints are not factual at all. 249 agent runs took a few hundred candidates down to nine. A human took nine down to one in about thirty seconds, and picked the roomy one next to the best water. Both numbers are correct. Neither party could have done the other's job.</p>
+
+<hr>
+
+<h2>Anticipated objections</h2>
+
+<p>In the spirit of saving everyone some time:</p>
+
+<h3>"Couldn't you have done this yourself in an hour?"</h3>
+<p>I could have gotten a worse answer in an hour. An hour of browsing surfaces neither the front-runner that was silently booked, nor the owner-direct link redirecting to a different building, nor a beach-quality ranking that exists in no database. I <em>did</em> spend the hour. I spent it stating my requirements badly.</p>
+
+<h3>"249 agents to book a condo is absurd."</h3>
+<p>Correct, and that's the interesting part. It's absurd <em>at today's prices, for this stake</em>. Both of those numbers move, and they move in opposite directions. The economics only work when the cost of being wrong is large and the commit is hard to undo. Which brings us to:</p>
+
+<h3>"So when should I actually do this?"</h3>
+<p>When <code>P(wrong) × cost(wrong) &gt; cost(verification)</code>. For a $3,000 booking with a birthday attached, verification is nearly free by comparison — verify aggressively. For a $30 reversible purchase, don't run any of this. Buy the socks.</p>
+
+<h3>"Why not just use the site's filters?"</h3>
+<p>Because the deciding attribute wasn't a filter. There is no <code>beach_is_soft</code> checkbox, and the only parties positioned to add one are the parties with an incentive to always check it.</p>
+
+<h3>"Did the agents hallucinate?"</h3>
+<p>Constantly, and always in the direction of optimism. Free text let them launder "a strip of ocean visible over the neighbor's roof" into "ocean view." The fix wasn't a better model — it was forcing them to pick one of four enum values and then paying a second model to attack the answer. <strong>Hallucination is a formatting problem more often than people admit.</strong></p>
+
+<h3>"What did it actually cost?"</h3>
+<p>Over 1.5M subagent tokens across the measured workflows, roughly 35 minutes of agent wall-clock for the five biggest, and less money than one night of the condo it booked.</p>
+
+<hr>
+
+<h2>The reusable recipe</h2>
+
+<p>Strip out Maui and this generalizes to any high-stakes, low-frequency, multi-constraint purchase — apartments, contractors, weddings, used cars, schools:</p>
+
+<ol>
+  <li><b>Write the constraints down as hard filters.</b> Ours: available · ocean view · walk to soft-swim sand · ≤ $3,500. Anything that fails one is dead, regardless of how good it looks.</li>
+  <li><b>Identify the missing column.</b> The attribute that decides the purchase but exists in no database. Build it from independent sources. (For us: beach swimmability.)</li>
+  <li><b>Fan out along orthogonal search angles.</b> Different agents, different sources, blind to each other. Structured output, always — schemas beat prose.</li>
+  <li><b>Adversarially verify every survivor.</b> Spawn skeptics prompted to refute. Majority-refute kills the candidate. Uncertainty defaults to rejection.</li>
+  <li><b>Prove the negative.</b> Exhaust the adjacent categories so "this is best" is a finding, not an assumption.</li>
+  <li><b>Re-verify before committing.</b> Availability and price are perishable. The check that mattered most was the last one.</li>
+  <li><b>Audit your own artifact.</b> Generated documents accrete contradictions. Chunk it, hand agents the ground truth, ask what conflicts.</li>
+</ol>
+
+<h2>We turned it into a skill</h2>
+
+<p>The recipe above isn't a blog-post abstraction — it's a file. Claude Code lets you write <strong>skills</strong>: markdown documents that get loaded into context when a matching task shows up. So the hard-won lessons don't evaporate when the session ends; the next search inherits them.</p>
+
+<p>Two came out of this project:</p>
+
+<ul>
+  <li><code>/trip-planner</code> — the domain workflow (fan-out research, live MCP pricing, all-in cost model, HTML dossier). It existed before Maui. It has now been amended with everything that went wrong: <em>lock the dates before deep pricing</em>, <em>don't start until you have the ceiling and the hard filters</em>, and a list of the traps that each cost a crowned pick.</li>
+  <li><code>/adversarial-verify</code> — the general one, and the more interesting one. It has nothing to do with travel. It's the harness for any decision where <strong>the person writing the data benefits from your believing it</strong>: rentals, contractors, vendors, marketplaces, job posts.</li>
+</ul>
+
+<p>It isn't a manifesto; it's machinery. Nine files: the skill itself, four references, three runnable workflow templates, and a checklist you read out loud before the user clicks buy.</p>
+
+<pre><code>adversarial-verify/
+├── SKILL.md                          # the harness
+├── references/
+│   ├── preference-construction.md    # why constraints arrive late; design for it
+│   ├── traps.md                      # the 200-OK lie, marketing laundering
+│   ├── schemas.md                    # enum library; why free text is unsafe
+│   └── stopping-rules.md             # Δp·L > c  — when to stop verifying
+├── templates/
+│   ├── verify.workflow.js            # skeptics w/ diverse lenses; majority-refute
+│   ├── prove-negative.workflow.js    # adjacent-category sweep
+│   └── artifact-audit.workflow.js    # chunked contradiction sweep
+└── checklists/pre-commit.md</code></pre>
+
+<p>Step 0 is the one I'd defend hardest, because it's the fix for the failure this whole post is about:</p>
+
+<pre><code># Step 0 — Probe before you search
+
+> The user cannot tell you their constraints. They can only recognize
+> violations. So don't ask. Show.
+
+Spend ~1% of budget on 5–7 deliberately diverse candidates — including
+ones you expect to be wrong — and ask exactly this:
+
+    "Which of these are wrong, and what specifically makes them wrong?"
+
+Then: filter in code, never in a prompt. Uncertainty fails.
+Majority-refute kills. Ties go to the skeptics.</code></pre>
+
+<p>That's the artifact I'd actually hand a friend. Not the trip plan — the harness that produced it.</p>
+
+<h2>Why this might be a company</h2>
+
+<p>Aggregators solved <em>finding</em>. Nobody solved <em>trusting</em>. Every booking site on earth will show you a price for a room that's unavailable, a beach that's rocky, and a "verified" owner link that redirects to another property. The listings are an adversarial data source, and the incumbents' incentives are not aligned with telling you so.</p>
+
+<p>The defensible layer isn't the index — it's the <strong>verification harness</strong>: the browser fleet that confirms a Reserve button is actually live, the skeptic agents that demand photo evidence for an "ocean view," the constructed columns for qualities no schema captures, and a receipt trail showing exactly how each claim was checked.</p>
+
+<p>It's expensive per query — 249 agent runs and well over a million tokens for one booking. Which is precisely why it works for decisions where being wrong costs $3,000 and a ruined birthday, and doesn't work for buying socks. That's a real market, and it's the one where "AI search" currently fails the hardest.</p>
+
+<p class="muted">The trip is booked. The beach is soft. The rest is a product idea.</p>
+
+<footer>
+  <div style="margin-bottom:12px"><b>Read next:</b> <a href="./">📍 The trip plan itself</a> · <a href="planning-with-agents.html">✨ The shorter story, for sharing</a></div>
+  Built with Claude Code (Opus 4.8) · Airbnb, Claude-in-Chrome, DirectBooker &amp; TripAdvisor MCPs · 17 workflows, 249 agent runs, 41 versions.
+</footer>
+
+</div>
+</body>
+</html>

@@ -1,0 +1,287 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>I'll Know It When I See It: Planning a Trip with 249 AI Agents</title>
+<meta name="description" content="How 17 multi-agent workflows, 249 agent runs, and a lot of adversarial skepticism found a swimmable beach in Maui — and what it taught me about how people actually decide.">
+<style>
+  :root{
+    --paper:#f4f1ea; --card:#fefcf7; --ink:#1f262a; --line:#e4dccd; --muted:#6f7168;
+    --text:#242b27; --teal:#0e6b63; --teal-deep:#0a4f49; --coral:#d3562a; --good:#2c7a54;
+  }
+  @media (prefers-color-scheme: dark){
+    :root{
+      --paper:#0e1417; --card:#151c1f; --ink:#eef1ea; --line:#26343a; --muted:#98a29a;
+      --text:#dde6df; --teal:#46b3a8; --teal-deep:#63c6ba; --coral:#f0764c; --good:#5cd196;
+    }
+  }
+  :root[data-theme="light"]{
+    --paper:#f4f1ea; --card:#fefcf7; --ink:#1f262a; --line:#e4dccd; --muted:#6f7168;
+    --text:#242b27; --teal:#0e6b63; --teal-deep:#0a4f49; --coral:#d3562a; --good:#2c7a54;
+  }
+  :root[data-theme="dark"]{
+    --paper:#0e1417; --card:#151c1f; --ink:#eef1ea; --line:#26343a; --muted:#98a29a;
+    --text:#dde6df; --teal:#46b3a8; --teal-deep:#63c6ba; --coral:#f0764c; --good:#5cd196;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;padding:0}
+  body{
+    background:var(--paper); color:var(--text);
+    font-family:system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+    font-size:17px; line-height:1.65;
+    -webkit-font-smoothing:antialiased; overflow-x:hidden;
+  }
+  .wrap{max-width:730px; margin:0 auto; padding:0 22px 88px}
+  header.masthead{padding:64px 0 8px}
+  .kicker{
+    font-size:.78rem; letter-spacing:.14em; text-transform:uppercase;
+    color:var(--teal); font-weight:600; margin:0 0 18px;
+  }
+  h1{
+    font-family:"Iowan Old Style","Palatino Linotype","Book Antiqua",Palatino,Georgia,serif;
+    color:var(--ink); font-size:clamp(2rem,5.4vw,2.85rem); line-height:1.14;
+    font-weight:700; margin:0 0 16px; letter-spacing:-.01em;
+  }
+  .deck{
+    font-family:"Iowan Old Style","Palatino Linotype","Book Antiqua",Palatino,Georgia,serif;
+    font-size:1.22rem; line-height:1.5; color:var(--muted); margin:0 0 22px;
+  }
+  .byline{
+    font-size:.88rem; color:var(--muted); margin:0 0 8px;
+  }
+  .byline b{color:var(--ink); font-weight:600}
+  .rule{border:none; border-top:1px solid var(--line); margin:30px 0}
+  /* stats strip */
+  .stats{
+    display:grid; grid-template-columns:repeat(5,1fr); gap:1px;
+    background:var(--line); border:1px solid var(--line); border-radius:10px;
+    overflow:hidden; margin:34px 0 10px;
+  }
+  .stat{background:var(--card); padding:14px 8px 12px; text-align:center}
+  .stat .n{
+    font-family:"Iowan Old Style","Palatino Linotype","Book Antiqua",Palatino,Georgia,serif;
+    font-size:1.45rem; font-weight:700; color:var(--teal); line-height:1.1; display:block;
+  }
+  .stat .l{font-size:.68rem; letter-spacing:.08em; text-transform:uppercase; color:var(--muted); margin-top:4px; display:block}
+  @media (max-width:560px){
+    .stats{grid-template-columns:repeat(2,1fr)}
+    .stat:last-child{grid-column:span 2}
+  }
+  h2{
+    font-family:"Iowan Old Style","Palatino Linotype","Book Antiqua",Palatino,Georgia,serif;
+    color:var(--ink); font-size:1.55rem; line-height:1.25; font-weight:700;
+    margin:52px 0 14px; letter-spacing:-.005em;
+  }
+  h3{
+    font-family:"Iowan Old Style","Palatino Linotype","Book Antiqua",Palatino,Georgia,serif;
+    color:var(--ink); font-size:1.12rem; margin:30px 0 8px; font-weight:700;
+  }
+  p{margin:0 0 18px}
+  strong{color:var(--ink)}
+  em{color:inherit}
+  a{color:var(--teal); text-decoration:underline; text-decoration-color:color-mix(in srgb,var(--teal) 40%,transparent); text-underline-offset:3px}
+  a:hover{color:var(--teal-deep)}
+  ul,ol{margin:0 0 18px; padding-left:1.3em}
+  li{margin-bottom:8px}
+  blockquote.pull{
+    font-family:"Iowan Old Style","Palatino Linotype","Book Antiqua",Palatino,Georgia,serif;
+    font-size:1.42rem; line-height:1.38; color:var(--ink);
+    border:none; border-left:3px solid var(--coral);
+    margin:38px 0; padding:4px 0 4px 22px; font-weight:600;
+  }
+  blockquote.pull .attr{display:block; font-size:.85rem; font-weight:400; color:var(--muted); font-family:system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif; margin-top:10px}
+  .callout{
+    background:var(--card); border:1px solid var(--line); border-radius:10px;
+    padding:18px 20px; margin:26px 0;
+  }
+  .callout .tag{
+    font-size:.72rem; letter-spacing:.12em; text-transform:uppercase; font-weight:700;
+    color:var(--coral); display:block; margin-bottom:6px;
+  }
+  .callout p:last-child{margin-bottom:0}
+  .callout.good .tag{color:var(--good)}
+  .callout.teal .tag{color:var(--teal)}
+  .mono-scroll{overflow-x:auto; margin:0 0 18px}
+  code,pre{
+    font-family:ui-monospace,"SF Mono","Cascadia Code",Menlo,Consolas,monospace;
+    font-size:.86em;
+  }
+  code{
+    background:var(--card); border:1px solid var(--line); border-radius:5px;
+    padding:.1em .38em; color:var(--teal-deep); white-space:nowrap;
+  }
+  pre{
+    background:var(--card); border:1px solid var(--line); border-radius:10px;
+    padding:16px 18px; margin:0; line-height:1.55; color:var(--text);
+    min-width:0;
+  }
+  pre code{background:none; border:none; padding:0; white-space:pre; color:inherit}
+  .kills{counter-reset:kill; list-style:none; padding-left:0; margin:22px 0}
+  .kills li{
+    counter-increment:kill; position:relative; padding-left:52px; margin-bottom:22px;
+  }
+  .kills li::before{
+    content:counter(kill); position:absolute; left:0; top:2px;
+    width:34px; height:34px; border-radius:50%;
+    background:var(--card); border:1.5px solid var(--coral); color:var(--coral);
+    font-family:"Iowan Old Style","Palatino Linotype","Book Antiqua",Palatino,Georgia,serif;
+    font-weight:700; font-size:1.05rem;
+    display:flex; align-items:center; justify-content:center;
+  }
+  .kills li b.kt{display:block; color:var(--ink); font-weight:700}
+  footer.endnote{
+    margin-top:64px; padding-top:26px; border-top:1px solid var(--line);
+    color:var(--muted); font-size:.9rem;
+  }
+  .closer{
+    font-family:"Iowan Old Style","Palatino Linotype","Book Antiqua",Palatino,Georgia,serif;
+    font-size:1.28rem; color:var(--ink); font-weight:600; margin-top:44px;
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header class="masthead">
+  <p class="kicker">Show &amp; Tell · Agents in the wild</p>
+  <h1>I&rsquo;ll Know It When I See&nbsp;It</h1>
+  <p class="deck">I asked 249 AI agents to find me a beach with soft sand. Along the way they killed three &ldquo;perfect&rdquo; answers, caught a website quietly lying to them, and taught me something about how people actually decide things.</p>
+  <p class="byline"><b>Josh Gourneau</b> · 2026</p>
+</header>
+
+<nav aria-label="Pages in this project" style="display:flex;flex-wrap:wrap;gap:6px;margin:20px 0 8px;padding:7px;border:1px solid var(--line);border-radius:13px;background:var(--card)">
+  <a href="./" style="padding:8px 13px;border-radius:9px;font-size:13.5px;font-weight:600;white-space:nowrap;color:var(--teal);text-decoration:none;border-bottom:none">📍 The plan</a>
+  <a href="story.html" style="padding:8px 13px;border-radius:9px;font-size:13.5px;font-weight:600;white-space:nowrap;color:var(--teal);text-decoration:none;border-bottom:none">✨ The story · 3 min</a>
+  <span style="padding:8px 13px;border-radius:9px;font-size:13.5px;font-weight:800;white-space:nowrap;color:var(--ink);background:color-mix(in srgb,var(--teal) 15%,transparent);box-shadow:inset 0 -2px 0 var(--teal)" aria-current="page">📖 The long version · 7 min</span>
+  <a href="how-we-planned-maui.html" style="padding:8px 13px;border-radius:9px;font-size:13.5px;font-weight:600;white-space:nowrap;color:var(--teal);text-decoration:none;border-bottom:none">🛠 How we built it · 12 min</a>
+</nav>
+
+<div class="stats" aria-label="Project stats">
+  <div class="stat"><span class="n">249</span><span class="l">agent runs</span></div>
+  <div class="stat"><span class="n">17</span><span class="l">workflows</span></div>
+  <div class="stat"><span class="n">41</span><span class="l">doc versions</span></div>
+  <div class="stat"><span class="n">3</span><span class="l">picks killed</span></div>
+  <div class="stat"><span class="n">1</span><span class="l">condo booked</span></div>
+</div>
+
+<hr class="rule">
+
+<p>The brief sounded easy. Twelve nights on Maui for two people, celebrating my partner&rsquo;s birthday. Under $3,500 for lodging. An ocean view. And the requirement that actually mattered: a beach you could genuinely <em>swim</em> at. Soft sand under your feet. No rocks.</p>
+
+<p>That last one is the whole story. &ldquo;Is this beach soft and swimmable?&rdquo; is not a field in any booking database. There&rsquo;s no filter for it. And every single listing &mdash; every one &mdash; claims its beach is wonderful. One unquantified requirement turned what should have been a weekend of browsing into a real search problem.</p>
+
+<p>So I did what you do in 2026 when you have a real search problem: I threw agents at it. A lot of them. By the end: <strong>17 multi-agent workflows, 249 individual agent runs, more than 1.5 million tokens of agent work</strong>, across 41 versions of a living trip-planning document. Total cost: less than one night of the condo it eventually booked.</p>
+
+<h2>The stack, briefly</h2>
+
+<p>The brain was Claude Code running Opus 4.8 as the orchestrator, wired to a handful of data sources over MCP (the open protocol for connecting models to tools). Each one earned a specific level of trust:</p>
+
+<ul>
+  <li><strong>An Airbnb data connector</strong> &mdash; great for structured listing details; <em>not</em> trustworthy about whether anything is actually available.</li>
+  <li><strong>A real automated web browser</strong> &mdash; the only reliable source of true availability and final checkout prices.</li>
+  <li><strong>Hotel-rate connectors</strong> (DirectBooker, TripAdvisor) for comparison pricing.</li>
+  <li><strong>A geocoder</strong> (Nominatim) to turn addresses into map coordinates.</li>
+  <li><strong>Open web search</strong> for the thing no booking site would ever tell me: independent beach reports.</li>
+</ul>
+
+<p>That trust hierarchy &mdash; structured APIs for facts about listings, a real browser for facts about <em>right now</em> &mdash; turned out to matter more than any prompt I wrote.</p>
+
+<h2>The core pattern: fan out, then attack</h2>
+
+<p>Every workflow had two phases.</p>
+
+<p><strong>Fan out.</strong> Spawn many agents in parallel, each hunting a different way: one combs Airbnb, one hunts owner-direct sites, one chases timeshare rentals, one reads independent beach guides. Each returns structured data &mdash; fields, not essays.</p>
+
+<p><strong>Attack.</strong> For every surviving candidate, spawn <em>skeptic</em> agents whose only job is to refute it. Not evaluate it &mdash; <em>refute</em> it. Is it really available? Is that really the price? Is that beach really sand? When unsure, the skeptic&rsquo;s instructions were to default to rejection.</p>
+
+<blockquote class="pull">Searching produces plausible options. It doesn&rsquo;t produce true ones. Disproof was the scarce resource.</blockquote>
+
+<p>This sounds paranoid until you watch it work. Three separate times, a &ldquo;winner&rdquo; was crowned, written into the plan, published &mdash; and then executed by a skeptic agent.</p>
+
+<ol class="kills">
+  <li>
+    <b class="kt">The crowned pick was already booked.</b>
+    The listing looked perfect; it was also gone. Availability isn&rsquo;t a property of a listing &mdash; it&rsquo;s a property of a <em>moment</em>. You have to re-check right before committing, every time.
+  </li>
+  <li>
+    <b class="kt">The &ldquo;verified price&rdquo; was for a condo that didn&rsquo;t exist at that address.</b>
+    This one is wild. Load a sold-out Airbnb listing with your dates in the URL and the site quietly shows you a <em>different property</em> &mdash; same page layout, a real price, wrong unit. A naive scraper cheerfully reports that price as belonging to the original. Separately, an &ldquo;owner-direct&rdquo; booking link silently redirected to a different condo <em>nine miles up the coast</em>. So a number we&rsquo;d been quoting for days described a place that wasn&rsquo;t the place. The lesson generalizes to every scraper and every integration you will ever build: a page loading successfully &mdash; <code>200 OK</code> &mdash; means nothing. You must confirm the page you landed on is the thing you asked for.
+  </li>
+  <li>
+    <b class="kt">&ldquo;Oceanfront&rdquo; meant lava rock.</b>
+    One building genuinely fronted the ocean &mdash; across a shelf of jagged lava. Another&rsquo;s &ldquo;ocean view&rdquo; was a sliver of blue over a neighbor&rsquo;s roof. So we stopped trusting listings for that dimension entirely and built our own beach-quality ranking from independent guides, matched to each property by GPS coordinates. Never let the seller grade its own homework.
+  </li>
+</ol>
+
+<h2>The small trick that did huge work</h2>
+
+<p>One change improved data quality more than anything else: we forbade the agents from answering in prose. For every judgment call, the agent had to pick from a fixed menu:</p>
+
+<div class="mono-scroll"><pre><code>ocean_view:      yes | partial | no | unknown
+swimmable_beach: yes | partial | no | unknown
+walkable_to_sand: yes | no | unknown</code></pre></div>
+
+<p>Two listings that both advertised &ldquo;ocean view&rdquo; were forced, under this scheme, to admit <code>partial</code>. Free text would have laundered both into a yes &mdash; &ldquo;stunning ocean vistas!&rdquo; is a sentence a language model is very happy to write.</p>
+
+<div class="callout teal">
+  <span class="tag">Worth stating plainly</span>
+  <p>A lot of what gets called AI &ldquo;hallucination&rdquo; is really a <em>formatting</em> problem. Give the model room to waffle and it will waffle. Take the room away &mdash; force <code>yes / partial / no / unknown</code> &mdash; and it becomes honest, because <code>unknown</code> is finally a legal answer.</p>
+</div>
+
+<h2>The bug nobody wrote</h2>
+
+<p>Then the system failed in a way I did to myself. After enough edits across 41 versions, the planning document started contradicting <em>itself</em>. The top recommendation was a property a later section had marked disqualified. The booking checklist calmly instructed the reader to book a $6,204 condo &mdash; against a $3,500 budget. Nobody wrote that bug. It accreted, the way contradictions accrete in any long-lived document that many hands (or many agents) touch.</p>
+
+<p>The fix was more agents: an 8-agent consistency audit that chunks the document and asks each agent one question &mdash; <em>what here contradicts the current known truth?</em> It now runs before anything ships.</p>
+
+<div class="callout">
+  <span class="tag">The uncomfortable reflection</span>
+  <p>A beautifully formatted wrong answer is more dangerous than an ugly one. Polish makes a bad recommendation look trustworthy. Verify before you decorate.</p>
+</div>
+
+<h2>Proving the negative</h2>
+
+<p>Late in the process came the best question anyone asked: <em>is a condo even the right category?</em> Maybe the whole framing was wrong. So six agents each priced out a different category, live: timeshare rentals, whole houses, hotel-plus-car bundles, the book-a-whole-month-for-the-monthly-discount play, glamping and eco-stays.</p>
+
+<p>Verdict: the condo genuinely wins &mdash; and now we know <em>why</em>. It&rsquo;s the only category that delivers ocean view <em>and</em> soft swimmable sand <em>and</em> a whole private place under budget. Every cheaper option drops one of those legs. That&rsquo;s a fundamentally better answer than &ldquo;here are 40 listings,&rdquo; because it comes with its own refutation attempts attached.</p>
+
+<h2>Turn 47</h2>
+
+<p>Here&rsquo;s the part I keep thinking about. The single most decisive requirement in the whole project &mdash; the $3,500 budget cap &mdash; wasn&rsquo;t stated until turn 47 of a 59-turn conversation. It arrived as an exasperated correction, right after I was shown an option way over budget. And the kicker: the original written brief had said the budget was <em>flexible, $6&ndash;8k</em>. The spec asserted the opposite of the real constraint.</p>
+
+<p>This isn&rsquo;t a story about being bad at writing requirements. This is how people are. You often don&rsquo;t know what you want until you&rsquo;re shown something you <em>don&rsquo;t</em> want. &ldquo;I know it when I see it,&rdquo; Justice Potter Stewart famously said in 1964 &mdash; about a much spicier topic &mdash; and it&rsquo;s a genuinely accurate description of how we recognize things we can&rsquo;t define. People are far better at <em>recognizing</em> a bad option than at <em>specifying</em> a good one up front.</p>
+
+<blockquote class="pull">Rejections carry more information than requirements.</blockquote>
+
+<p>Which reframes what this tool actually is. It&rsquo;s not a search engine. Every rejection was a training signal: I couldn&rsquo;t write down the goal, but I could reliably say &ldquo;not that, because rocks.&rdquo; The system was quietly learning my preferences from my nos. If that sounds like how modern AI models are themselves trained from human feedback &mdash; it is, and for the same underlying reason. For the things that matter most, people can <em>judge</em> but not <em>specify</em>.</p>
+
+<p>The economics are what recently made this sane. When each re-search costs a weekend, you commit early to a spec you haven&rsquo;t tested &mdash; you have to. When a re-search costs ten minutes and pocket change, &ldquo;I&rsquo;ll know it when I see it&rdquo; stops being lazy and becomes the smart strategy: you can afford to discover your real constraints by bumping into them.</p>
+
+<div class="callout good">
+  <span class="tag">The actual product</span>
+  <p>The product isn&rsquo;t the search. It&rsquo;s making iteration cheap enough that <em>figuring out what you want</em> can happen inside the loop.</p>
+</div>
+
+<h2>Where the human stays essential</h2>
+
+<p>After everything that violated a hard rule had been eliminated, nine genuinely good options remained. Choosing among them meant trading things that don&rsquo;t convert into each other: beachfront versus an extra thousand square feet versus $500. There is no correct formula for that. Any &ldquo;weighted score&rdquo; is just an opinion wearing a lab coat.</p>
+
+<p>So the division of labor ends up clean and, I think, kind of beautiful: <strong>the agents enforce the facts; the human judges the values.</strong> 249 agent runs narrowed a few hundred candidates to nine. A person picked the final one in about thirty seconds &mdash; the roomy place next to the best water.</p>
+
+<h2>What we booked</h2>
+
+<p>A one-bedroom, two-bath condo. A thousand square feet. 4.92 stars across 185 reviews. Directly across the road from Keawakapu &mdash; the highest-rated soft-swim beach in the area by our own independent ranking, not the listing&rsquo;s. <strong>$2,937 all-in for twelve nights</strong>, under a budget I didn&rsquo;t know I had until turn 47.</p>
+
+<p>And it was never the front-runner. My agents had ranked it <strong>third</strong> on their own shortlist &mdash; behind a beachfront splurge they&rsquo;d crowned first and a cheaper unit they&rsquo;d slotted second. I overrode them, because the thing I wanted most &mdash; an extra room and the better beach &mdash; was exactly the thing they couldn&rsquo;t score. It was simply the last option standing after every attempt to kill it, plus a human&rsquo;s taste.</p>
+
+<p class="closer">We didn&rsquo;t find the perfect condo. We disproved everything else.</p>
+
+<footer class="endnote">
+  <p style="margin-bottom:12px"><b>Read next:</b> <a href="./">📍 The trip plan itself</a> · <a href="how-we-planned-maui.html">🛠 How we built it (the technical deep-dive)</a></p>
+  <p>Built with Claude Code (Opus 4.8), a browser that tells the truth, and a healthy distrust of the word &ldquo;oceanfront.&rdquo; Total agent spend: less than one night&rsquo;s stay.</p>
+</footer>
+
+</div>
+</body>
+</html>
