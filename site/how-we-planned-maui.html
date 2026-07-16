@@ -85,6 +85,8 @@
   @media(max-width:560px){.tllabel{font-size:11px}}
   footer{border-top:1px solid var(--line);margin-top:52px;padding:24px 0 60px;color:var(--muted);font-size:13px}
   .muted{color:var(--muted)}
+  .mermaid{margin:26px 0;padding:14px;background:var(--card);border:1px solid var(--line);border-radius:12px;text-align:center;line-height:1.2}
+  .mermaid svg{max-width:100%;height:auto}
 </style>
 </head>
 <body>
@@ -97,12 +99,7 @@
   <div class="byline">Josh Gourneau · July 2026 · ~9 min read</div>
 </header>
 
-<nav aria-label="Pages in this project" style="display:flex;flex-wrap:wrap;gap:6px;margin:20px 0 8px;padding:7px;border:1px solid var(--line);border-radius:13px;background:var(--card)">
-  <a href="./" style="padding:8px 13px;border-radius:9px;font-size:13.5px;font-weight:600;white-space:nowrap;color:var(--teal);text-decoration:none;border-bottom:none">📍 The plan</a>
-  <a href="story.html" style="padding:8px 13px;border-radius:9px;font-size:13.5px;font-weight:600;white-space:nowrap;color:var(--teal);text-decoration:none;border-bottom:none">✨ The story · 3 min</a>
-  <a href="planning-with-agents.html" style="padding:8px 13px;border-radius:9px;font-size:13.5px;font-weight:600;white-space:nowrap;color:var(--teal);text-decoration:none;border-bottom:none">📖 The long version · 7 min</a>
-  <span style="padding:8px 13px;border-radius:9px;font-size:13.5px;font-weight:800;white-space:nowrap;color:var(--ink);background:color-mix(in srgb,var(--teal) 15%,transparent);box-shadow:inset 0 -2px 0 var(--teal)" aria-current="page">🛠 How we built it · 12 min</span>
-</nav>
+<nav aria-label="Pages in this project" style="display:flex;flex-wrap:nowrap;gap:6px;overflow-x:auto;margin:18px 0 8px;padding:7px;border:1px solid var(--line);border-radius:12px;background:var(--card);-webkit-overflow-scrolling:touch"><a href="./" style="flex:0 0 auto;padding:8px 12px;border-radius:8px;font-size:13.5px;font-weight:600;white-space:nowrap;color:var(--teal);text-decoration:none;border-bottom:none">📍 The plan</a><a href="story.html" style="flex:0 0 auto;padding:8px 12px;border-radius:8px;font-size:13.5px;font-weight:600;white-space:nowrap;color:var(--teal);text-decoration:none;border-bottom:none">✨ The story</a><a href="planning-with-agents.html" style="flex:0 0 auto;padding:8px 12px;border-radius:8px;font-size:13.5px;font-weight:600;white-space:nowrap;color:var(--teal);text-decoration:none;border-bottom:none">📖 Long version</a><span aria-current="page" style="flex:0 0 auto;padding:8px 12px;border-radius:8px;font-size:13.5px;font-weight:800;white-space:nowrap;color:var(--ink);background:color-mix(in srgb,var(--teal) 15%,transparent);box-shadow:inset 0 -2px 0 var(--teal)">🛠 How we built it</span><a href="https://github.com/gourneau/adversarial-verify" target="_blank" rel="noopener" style="flex:0 0 auto;padding:8px 12px;border-radius:8px;font-size:13.5px;font-weight:600;white-space:nowrap;color:var(--teal);text-decoration:none;border-bottom:none">⌗ Code ↗</a></nav>
 
 <p class="lede">The goal was almost embarrassingly simple: two people, twelve nights on Maui, celebrating a birthday. Under $3,500 for housing. An ocean view. And a beach you could actually <em>swim</em> at — soft sand, no rocks.</p>
 
@@ -149,17 +146,27 @@
 
 <p><strong>2. Attack.</strong> For every candidate that survives, spawn skeptics whose only job is to <em>refute</em> it. Not "evaluate" — refute. Default to rejection when uncertain.</p>
 
-<div class="flow">
-  <div class="fstep"><b>Constraint spec</b><span>hard filters — fail one, you're dead</span></div>
-  <div class="fstep fan"><b>Fan out ⇉</b><span>N finders, parallel, orthogonal sources · one constructs the <em>missing column</em></span></div>
-  <div class="fstep"><b>Candidates</b><span>schema-validated objects, not prose</span></div>
-  <div class="fstep atk"><b>Adversarial verify ⚔</b><span>K skeptics per candidate · prompted to <em>refute</em> · uncertainty ⇒ reject</span></div>
-  <div class="fsplit"><span class="kill">✕ killed</span><span class="live">✓ survivors</span></div>
-  <div class="fstep"><b>Prove the negative</b><span>sweep adjacent categories so "best" is a finding, not an assumption</span></div>
-  <div class="fstep"><b>Synthesize → artifact</b><span>then <em>audit the artifact</em> for self-contradiction, loop back</span></div>
-  <div class="fstep"><b>Re-verify at commit time</b><span>availability &amp; price are perishable</span></div>
-  <div class="fstep human"><b>Human decides</b><span>agents narrow, humans choose</span></div>
-</div>
+<div class="scroll"><pre class="mermaid">
+flowchart TD
+  A["Constraints — the hard filters"] --> B{"Fan out"}
+  B --> F1["Finder: marketplace"]
+  B --> F2["Finder: owner-direct"]
+  B --> F3["Finder: adjacent categories"]
+  B --> F4["Finder: independent sources — build the missing column"]
+  F1 --> C["Candidates — schema-validated"]
+  F2 --> C
+  F3 --> C
+  F4 --> C
+  C --> D{"Adversarial verify — refute by default"}
+  D -->|PROBLEM| X["Killed"]
+  D -->|CONFIRMED| S["Survivors"]
+  S --> N["Prove the negative"]
+  N --> R["Synthesize into the dossier"]
+  R --> AU{"Self-audit for contradictions"}
+  AU -->|contradiction| R
+  AU -->|clean| RV["Re-verify at commit time"]
+  RV --> H(["Human decides"])
+</pre></div>
 
 <p>Here is the verify phase, verbatim from the file that ran (trimmed for length — the prompt was longer). It's JavaScript because the workflow runtime executes plain JS in a sandbox; this is not pseudocode:</p>
 
@@ -214,24 +221,7 @@ const verdicts = await parallel(CANDS.map(c => () =>
 
 <p>That last line is the point. The <code>enum</code> on <code>oceanView</code> is doing quiet, load-bearing work: it denies an agent the option of writing <em>"stunning ocean vistas!"</em> and forces it to pick one of four words. Two finalists whose listings both said "ocean view" resolved to <code>partial</code> — a strip of blue over a neighbor's roof, and a lanai filtered through landscaping. Free-text output would have laundered both into a yes.</p>
 
-<p class="muted">The same shape as Mermaid, if you want to steal it:</p>
-
-<pre><code>flowchart TD
-  A[Constraint spec: hard filters] --> B{Fan out}
-  B --> F1[Finder: marketplace API]
-  B --> F2[Finder: owner-direct]
-  B --> F3[Finder: adjacent categories]
-  B --> F4[Finder: independent sources<br/>construct the missing column]
-  F1 & F2 & F3 & F4 --> C[Candidates<br/>schema-validated]
-  C --> D{Adversarial verify<br/>refute by default}
-  D -->|PROBLEM| X[Killed]
-  D -->|CONFIRMED| S[Survivors]
-  S --> N[Prove the negative]
-  N --> R[Synthesize -> artifact]
-  R --> AU{Staleness audit}
-  AU -->|contradiction| R
-  AU -->|clean| RV[Re-verify at commit time]
-  RV --> H([Human decides])</code></pre>
+<p class="muted">(The diagram above is live Mermaid — the source is in <a href="https://github.com/gourneau/adversarial-verify" target="_blank" rel="noopener">the repo</a>.)</p>
 
 <div class="callout win">
   <b>The counterintuitive result:</b> adversarial verification eliminated more bad picks than additional searching ever found good ones. Search is cheap and abundant. <em>Disproof</em> is the scarce resource.
@@ -318,26 +308,24 @@ const verdicts = await parallel(CANDS.map(c => () =>
 
 <h2>The human in the loop: a fair post-mortem</h2>
 
-<p>It would be dishonest to write this up as though the machine did the work and the human supervised. I went back through the logs. <strong>59 turns.</strong> Here is when each hard constraint — the filters that ultimately decided everything — actually got stated:</p>
+<p>It would be dishonest to write this up as though the human just supervised. I went back through the logs — <strong>59 turns</strong> — and the honest picture is that the four hard filters split into two very different kinds:</p>
 
-<div class="tl">
-  <div class="tlrow"><div class="tlbar"><div class="tlfill" style="width:1.7%"></div><span class="tllabel">"Plan the trip"</span></div><div class="tlnum">turn 1</div></div>
-  <div class="tlrow"><div class="tlbar"><div class="tlfill" style="width:41%"></div><span class="tllabel">Must see &amp; hear the ocean</span></div><div class="tlnum">24</div></div>
-  <div class="tlrow"><div class="tlbar"><div class="tlfill" style="width:42%"></div><span class="tllabel">Flights are $0 — cost model reset</span></div><div class="tlnum">25</div></div>
-  <div class="tlrow late"><div class="tlbar"><div class="tlfill" style="width:68%"></div><span class="tllabel">Walk to the beach, no stairs</span></div><div class="tlnum">40</div></div>
-  <div class="tlrow late"><div class="tlbar"><div class="tlfill" style="width:75%"></div><span class="tllabel">Soft sand. "The rocks are not good."</span></div><div class="tlnum">44</div></div>
-  <div class="tlrow late"><div class="tlbar"><div class="tlfill" style="width:80%"></div><span class="tllabel">$3,500 hard cap on housing</span></div><div class="tlnum">47</div></div>
-  <div class="tlrow late"><div class="tlbar"><div class="tlfill" style="width:83%"></div><span class="tllabel">Two weeks only · must see ocean</span></div><div class="tlnum">49</div></div>
-  <div class="tlrow late"><div class="tlbar"><div class="tlfill" style="width:86%"></div><span class="tllabel">Final dates locked</span></div><div class="tlnum">51</div></div>
-</div>
+<div class="scroll"><pre class="mermaid">
+flowchart TD
+  C["Every constraint on the trip"] --> Q{"Could it be written down?"}
+  Q -->|"budget and dates"| SPEC["SPECIFIABLE — stated in the brief on day one — the agent's job is to REMEMBER it"]
+  Q -->|"'a good beach'"| DISC["UN-SPECIFIABLE — has no definition — must be DISCOVERED by counterexample"]
+  SPEC --> P["A harness you can trust needs BOTH: durable memory and counterexample elicitation"]
+  DISC --> P
+</pre></div>
 
-<p>The budget cap — the single most decisive filter in the entire project — arrived on <strong>turn 47 of 59</strong>, and it arrived as an accusation: <em>"bro you lost the price goals the winner is out of my price range."</em> The number had been in the user's head the whole time. It had never once been in a prompt.</p>
+<p>The budget and the dates were in the brief from the first message. The two filters that ended up deciding everything — <em>walk to soft, swimmable sand; no rocks</em> — were not, and could not have been. "A good beach" isn't a spec; it's something you recognize. Those two got discovered the only way they could be: by rejecting a finished answer and reading what the rejection revealed.</p>
 
-<p>Three of the four hard filters were discovered the same way: by <em>rejecting a finished answer</em>. Each rejection invalidated a completed research pass. The dates changed five times, and in travel every price and every availability check is keyed on dates — so each change silently rotted every number in the document.</p>
+<p>Two honest complications, and neither is the user failing to specify. First: the budget <em>tightened</em> mid-project — from the brief's flexible "~$6–8k" to a hard $3,500 cap — and across a long, multi-session run the agent lost the thread on price. When the user caught it, the words were <em>"you lost the price goals,"</em> which was exactly right: an agent had dropped a constraint it was handed. That's context rot, a real failure mode of long agent runs, and it's the machine's bug to fix. Second: the dates moved to August for a birthday, and in travel every price and availability check is keyed on dates — so each change silently rotted every number in the document. The trip legitimately changed; the system just didn't keep up.</p>
 
 <h3>What that cost</h3>
 <ul>
-  <li><b>Anger is not a spec.</b> "You lost the price goals" carries the same information as "hard cap: $3,500 housing" and arrives ten workflows later. One is a feeling; the other is a filter.</li>
+  <li><b>The agent dropped a constraint it was given.</b> The budget was in the brief; when it tightened, a long multi-session run let it slip, and "you lost the price goals" was an accurate bug report, not a mood. Long agent sessions rot context — a serious harness has to <em>re-pin</em> the hard filters at every commit, not quietly forget them.</li>
   <li><b>Decorating before validating.</b> Turns were spent on a "bouginess slider," image thumbnails, sortable tables, and a wide-screen layout — while the crowned recommendation was simultaneously <em>over budget, without an ocean view, and in one case already booked</em>. Polish applied to a wrong answer is worse than no polish: it makes the wrong answer look trustworthy.</li>
   <li><b>Global rewrites for local problems.</b> "This is too much info, boil it down" triggered a teardown from 26 sections to 6. The very next message: <em>"oh that is like maybe not enough now."</em> The actual desire — "put a summary on top, keep the detail below" — would have been one edit.</li>
   <li><b>Burying the simple answer.</b> The map thread ran four turns and three implementations (embedded Google, custom Leaflet pins, then links). The user proposed the winning solution themselves, mid-thread: <em>"or just make it simple and link to the google map in a link column."</em> That was available on turn one.</li>
@@ -397,7 +385,7 @@ const verdicts = await parallel(CANDS.map(c => () =>
 
 <p>Which also gives the fix. If people can't state constraints but can recognize violations, then <strong>stop asking and start showing.</strong> Before any expensive search, spend ~1% of the budget generating five deliberately diverse candidates — the cheapest thing that qualifies, the extravagant one, one that's perfect-but-for-a-flaw, one that's just weird — and ask a single question: <em>"which of these are wrong, and what makes them wrong?"</em></p>
 
-<p>That probe, run on turn 3, surfaces a $3,500 ceiling and a rock allergy. We surfaced them on turn 47. It's now Step 0 of the skill.</p>
+<p>That probe, run on turn 3, would have surfaced the rock allergy in minutes instead of on turn 44 — and it would have caught the budget tightening the moment it happened, instead of letting a long session quietly lose it. It's now Step 0 of the skill.</p>
 
 <h3>The hazard nobody warns you about</h3>
 
@@ -426,7 +414,7 @@ const verdicts = await parallel(CANDS.map(c => () =>
 <p>In the spirit of saving everyone some time:</p>
 
 <h3>"Couldn't you have done this yourself in an hour?"</h3>
-<p>I could have gotten a worse answer in an hour. An hour of browsing surfaces neither the front-runner that was silently booked, nor the owner-direct link redirecting to a different building, nor a beach-quality ranking that exists in no database. I <em>did</em> spend the hour. I spent it stating my requirements badly.</p>
+<p>I could have gotten a worse answer in an hour. An hour of browsing surfaces neither the front-runner that was silently booked, nor the owner-direct link redirecting to a different building, nor a beach-quality ranking that exists in no database. I <em>did</em> spend the hour — on a version of the trip that later changed, chasing a "good beach" I couldn't define until an agent showed me a bad one.</p>
 
 <h3>"249 agents to book a condo is absurd."</h3>
 <p>Correct, and that's the interesting part. It's absurd <em>at today's prices, for this stake</em>. Both of those numbers move, and they move in opposite directions. The economics only work when the cost of being wrong is large and the commit is hard to undo. Which brings us to:</p>
@@ -518,5 +506,17 @@ Majority-refute kills. Ties go to the skeptics.</code></pre>
 </footer>
 
 </div>
+<script type="module">
+  import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.esm.min.mjs';
+  const dark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+  mermaid.initialize({
+    startOnLoad: true,
+    securityLevel: 'strict',
+    theme: 'base',
+    themeVariables: dark
+      ? { background:'#151c1f', primaryColor:'#17211d', primaryTextColor:'#eef1ea', primaryBorderColor:'#46b3a8', lineColor:'#8b9a92', secondaryColor:'#1b2a2b', tertiaryColor:'#0e1417', fontFamily:'system-ui, sans-serif', fontSize:'15px' }
+      : { background:'#fefcf7', primaryColor:'#f2efe6', primaryTextColor:'#1f262a', primaryBorderColor:'#0e6b63', lineColor:'#6f7168', secondaryColor:'#ece5d6', tertiaryColor:'#f4f1ea', fontFamily:'system-ui, sans-serif', fontSize:'15px' }
+  });
+</script>
 </body>
 </html>

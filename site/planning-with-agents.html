@@ -150,12 +150,7 @@
   <p class="byline"><b>Josh Gourneau</b> · 2026</p>
 </header>
 
-<nav aria-label="Pages in this project" style="display:flex;flex-wrap:wrap;gap:6px;margin:20px 0 8px;padding:7px;border:1px solid var(--line);border-radius:13px;background:var(--card)">
-  <a href="./" style="padding:8px 13px;border-radius:9px;font-size:13.5px;font-weight:600;white-space:nowrap;color:var(--teal);text-decoration:none;border-bottom:none">📍 The plan</a>
-  <a href="story.html" style="padding:8px 13px;border-radius:9px;font-size:13.5px;font-weight:600;white-space:nowrap;color:var(--teal);text-decoration:none;border-bottom:none">✨ The story · 3 min</a>
-  <span style="padding:8px 13px;border-radius:9px;font-size:13.5px;font-weight:800;white-space:nowrap;color:var(--ink);background:color-mix(in srgb,var(--teal) 15%,transparent);box-shadow:inset 0 -2px 0 var(--teal)" aria-current="page">📖 The long version · 7 min</span>
-  <a href="how-we-planned-maui.html" style="padding:8px 13px;border-radius:9px;font-size:13.5px;font-weight:600;white-space:nowrap;color:var(--teal);text-decoration:none;border-bottom:none">🛠 How we built it · 12 min</a>
-</nav>
+<nav aria-label="Pages in this project" style="display:flex;flex-wrap:nowrap;gap:6px;overflow-x:auto;margin:18px 0 8px;padding:7px;border:1px solid var(--line);border-radius:12px;background:var(--card);-webkit-overflow-scrolling:touch"><a href="./" style="flex:0 0 auto;padding:8px 12px;border-radius:8px;font-size:13.5px;font-weight:600;white-space:nowrap;color:var(--teal);text-decoration:none;border-bottom:none">📍 The plan</a><a href="story.html" style="flex:0 0 auto;padding:8px 12px;border-radius:8px;font-size:13.5px;font-weight:600;white-space:nowrap;color:var(--teal);text-decoration:none;border-bottom:none">✨ The story</a><span aria-current="page" style="flex:0 0 auto;padding:8px 12px;border-radius:8px;font-size:13.5px;font-weight:800;white-space:nowrap;color:var(--ink);background:color-mix(in srgb,var(--teal) 15%,transparent);box-shadow:inset 0 -2px 0 var(--teal)">📖 Long version</span><a href="how-we-planned-maui.html" style="flex:0 0 auto;padding:8px 12px;border-radius:8px;font-size:13.5px;font-weight:600;white-space:nowrap;color:var(--teal);text-decoration:none;border-bottom:none">🛠 How we built it</a><a href="https://github.com/gourneau/adversarial-verify" target="_blank" rel="noopener" style="flex:0 0 auto;padding:8px 12px;border-radius:8px;font-size:13.5px;font-weight:600;white-space:nowrap;color:var(--teal);text-decoration:none;border-bottom:none">⌗ Code ↗</a></nav>
 
 <div class="stats" aria-label="Project stats">
   <div class="stat"><span class="n">249</span><span class="l">agent runs</span></div>
@@ -246,9 +241,11 @@ walkable_to_sand: yes | no | unknown</code></pre></div>
 
 <p>Verdict: the condo genuinely wins &mdash; and now we know <em>why</em>. It&rsquo;s the only category that delivers ocean view <em>and</em> soft swimmable sand <em>and</em> a whole private place under budget. Every cheaper option drops one of those legs. That&rsquo;s a fundamentally better answer than &ldquo;here are 40 listings,&rdquo; because it comes with its own refutation attempts attached.</p>
 
-<h2>Turn 47</h2>
+<h2>The constraint I couldn&rsquo;t write down</h2>
 
-<p>Here&rsquo;s the part I keep thinking about. The single most decisive requirement in the whole project &mdash; the $3,500 budget cap &mdash; wasn&rsquo;t stated until turn 47 of a 59-turn conversation. It arrived as an exasperated correction, right after I was shown an option way over budget. And the kicker: the original written brief had said the budget was <em>flexible, $6&ndash;8k</em>. The spec asserted the opposite of the real constraint.</p>
+<p>Here&rsquo;s the part I keep thinking about. I <em>did</em> write down a budget and dates on day one &mdash; the brief said so, in black and white, and I kept pushing on price the whole way through. What I couldn&rsquo;t write down was the requirement that turned out to decide everything: the beach had to be soft and swimmable. That rule didn&rsquo;t exist until an agent showed me a place that was &ldquo;oceanfront&rdquo; onto lava rock and I recoiled. <strong>The counterexample created the constraint.</strong></p>
+
+<p>(The budget did move &mdash; it tightened from &ldquo;flexible&rdquo; to a hard $3,500 cap partway through, and across a long, multi-session process the system briefly lost the thread on price. My exact words when I caught it were <em>&ldquo;you lost the price goals.&rdquo;</em> That&rsquo;s a real failure mode of long agent runs, and it&rsquo;s the machine&rsquo;s bug to fix &mdash; not a mystery about what I wanted. The thing nobody could have written down in advance was the beach.)</p>
 
 <p>This isn&rsquo;t a story about being bad at writing requirements. This is how people are. You often don&rsquo;t know what you want until you&rsquo;re shown something you <em>don&rsquo;t</em> want. &ldquo;I know it when I see it,&rdquo; Justice Potter Stewart famously said in 1964 &mdash; about a much spicier topic &mdash; and it&rsquo;s a genuinely accurate description of how we recognize things we can&rsquo;t define. People are far better at <em>recognizing</em> a bad option than at <em>specifying</em> a good one up front.</p>
 
@@ -271,7 +268,7 @@ walkable_to_sand: yes | no | unknown</code></pre></div>
 
 <h2>What we booked</h2>
 
-<p>A one-bedroom, two-bath condo. A thousand square feet. 4.92 stars across 185 reviews. Directly across the road from Keawakapu &mdash; the highest-rated soft-swim beach in the area by our own independent ranking, not the listing&rsquo;s. <strong>$2,937 all-in for twelve nights</strong>, under a budget I didn&rsquo;t know I had until turn 47.</p>
+<p>A one-bedroom, two-bath condo. A thousand square feet. 4.92 stars across 185 reviews. Directly across the road from Keawakapu &mdash; the highest-rated soft-swim beach in the area by our own independent ranking, not the listing&rsquo;s. <strong>$2,937 all-in for twelve nights</strong>, comfortably under the hard budget cap.</p>
 
 <p>And it was never the front-runner. My agents had ranked it <strong>third</strong> on their own shortlist &mdash; behind a beachfront splurge they&rsquo;d crowned first and a cheaper unit they&rsquo;d slotted second. I overrode them, because the thing I wanted most &mdash; an extra room and the better beach &mdash; was exactly the thing they couldn&rsquo;t score. It was simply the last option standing after every attempt to kill it, plus a human&rsquo;s taste.</p>
 

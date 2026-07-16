@@ -70,12 +70,7 @@
   <p class="byline"><b>Josh Gourneau</b> · 2026 · ~3 min read</p>
 </header>
 
-<nav class="sitenav" aria-label="Pages in this project">
-  <a href="./">📍 The plan</a>
-  <span class="cur" aria-current="page">✨ The story · 3 min</span>
-  <a href="planning-with-agents.html">📖 The long version · 7 min</a>
-  <a href="how-we-planned-maui.html">🛠 How we built it · 12 min</a>
-</nav>
+<nav aria-label="Pages in this project" style="display:flex;flex-wrap:nowrap;gap:6px;overflow-x:auto;margin:18px 0 8px;padding:7px;border:1px solid var(--line);border-radius:12px;background:var(--card);-webkit-overflow-scrolling:touch"><a href="./" style="flex:0 0 auto;padding:8px 12px;border-radius:8px;font-size:13.5px;font-weight:600;white-space:nowrap;color:var(--teal);text-decoration:none;border-bottom:none">📍 The plan</a><span aria-current="page" style="flex:0 0 auto;padding:8px 12px;border-radius:8px;font-size:13.5px;font-weight:800;white-space:nowrap;color:var(--ink);background:color-mix(in srgb,var(--teal) 15%,transparent);box-shadow:inset 0 -2px 0 var(--teal)">✨ The story</span><a href="planning-with-agents.html" style="flex:0 0 auto;padding:8px 12px;border-radius:8px;font-size:13.5px;font-weight:600;white-space:nowrap;color:var(--teal);text-decoration:none;border-bottom:none">📖 Long version</a><a href="how-we-planned-maui.html" style="flex:0 0 auto;padding:8px 12px;border-radius:8px;font-size:13.5px;font-weight:600;white-space:nowrap;color:var(--teal);text-decoration:none;border-bottom:none">🛠 How we built it</a><a href="https://github.com/gourneau/adversarial-verify" target="_blank" rel="noopener" style="flex:0 0 auto;padding:8px 12px;border-radius:8px;font-size:13.5px;font-weight:600;white-space:nowrap;color:var(--teal);text-decoration:none;border-bottom:none">⌗ Code ↗</a></nav>
 
 <p class="lede">I wanted to book a condo in Maui. Twelve nights, two people, a birthday. Under $3,500, an ocean view, and — the part that broke everything — a beach you could actually <em>swim</em> at. Soft sand, no rocks.</p>
 
@@ -114,9 +109,9 @@
 
 <h2>The part I didn't expect</h2>
 
-<p>My single most important rule — the $3,500 budget — I didn't say out loud until the agents had been working a while. It came out as an annoyed correction <em>after</em> I was shown something too expensive. My original written brief had actually said the budget was flexible. I'd told it the opposite of the truth.</p>
+<p>The requirement that mattered most wasn't one I could have written down. The beach had to be <em>soft and swimmable</em> — no rocks. I only figured that out by being shown a place that was technically "oceanfront" and recoiling, because it fronted a shelf of lava rock.</p>
 
-<p>That's not me being sloppy. It's how people are. You often can't list what you want, but you know it the instant you see what you don't. We're great at "no, not that" and lousy at "here's my exact spec." Every time I rejected something, I was really teaching the system what I cared about.</p>
+<p>That's not me being vague. It's how people are. "A good beach" has no definition and no checkbox — you know it when you see it. You often can't list what you want, but you can tell instantly when something's wrong. Every time I rejected an option, I was really teaching the system what I cared about. (The things I <em>could</em> write down — the budget, the dates — I handed over on day one. The work was keeping the machine honest about the stuff that only got sharp once I saw it.)</p>
 
 <p>Which flips the whole thing on its head. The agents weren't a search engine. They were a cheap way to <b>discover what I wanted by bumping into what I didn't</b> — and <em>cheap</em> is the magic word. When re-searching costs a weekend, you commit early and settle. When it costs ten minutes, "I'll know it when I see it" stops being lazy and becomes the smart move.</p>
 
