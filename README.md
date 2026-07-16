@@ -25,10 +25,10 @@ Three times a "winner" was crowned and published. Three times a skeptic agent ki
 The unit finally booked ([Maui Kamaʻole I-118](https://www.airbnb.com/rooms/22531397)) was never the front-runner — it was the agents' *third* recommendation. The machine narrowed a few hundred candidates to nine survivors; a human picked the final one in thirty seconds. **Agents enforce facts; humans adjudicate values.**
 
 **Read the write-ups (live):**
-- ✨ [The story](https://becca.radiantmachines.com/becca/maui/story.html) — the 3-minute version
-- 📖 [The long version](https://becca.radiantmachines.com/becca/maui/planning-with-agents.html)
-- 🛠 [How we built it](https://becca.radiantmachines.com/becca/maui/how-we-planned-maui.html) — the technical deep-dive
-- 📍 [The trip plan itself](https://becca.radiantmachines.com/becca/maui/)
+- ✨ [The story](https://gourneau.github.io/adversarial-verify/story.html) — the 3-minute version
+- 📖 [The long version](https://gourneau.github.io/adversarial-verify/planning-with-agents.html)
+- 🛠 [How we built it](https://gourneau.github.io/adversarial-verify/how-we-planned-maui.html) — the technical deep-dive
+- 📍 [The trip plan itself](https://gourneau.github.io/adversarial-verify/)
 
 ---
 
