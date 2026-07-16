@@ -1,302 +1,144 @@
 <!doctype html>
-<!-- Maui Trip Plan · v42 · 2026-07-07 · BALANCED · Jul 25→Aug 6 (12 nts) · booked: Maui Kamaole I-118 (Royal Mauian = beachfront runner-up) · flights $0 on miles -->
+<!-- The Story (short) · 2026 · the shareable 3-minute version -->
 <html lang="en">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Maui Trip Plan v42 — Jul 25→Aug 6 · the plan</title>
+<title>The Condo That Took 249 Agents — the short version</title>
+<meta name="description" content="How I used a swarm of AI agents to do something completely mundane — book a vacation rental — and what it accidentally taught me about how people decide. The 3-minute version.">
 <style>
   :root{
     --paper:#f4f1ea; --card:#fefcf7; --ink:#1f262a; --sand:#ece5d6; --line:#e4dccd;
-    --muted:#6f7168; --text:#242b27; --teal:#0e6b63; --teal-deep:#0a4f49; --lagoon:#2f9e90;
-    --coral:#d3562a; --good:#2c7a54; --good-bg:#e8efe6; --warn:#8f6316; --warn-bg:#f1e8d3;
+    --muted:#6f7168; --text:#242b27; --teal:#0e6b63; --teal-deep:#0a4f49; --coral:#d3562a; --good:#2c7a54;
     --shadow:0 1px 2px rgba(31,38,42,.05),0 10px 30px rgba(31,38,42,.07);
     --serif:"Iowan Old Style","Palatino Linotype","Book Antiqua",Palatino,Georgia,serif;
     --sans:system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
   }
   @media (prefers-color-scheme:dark){:root{
     --paper:#0e1417; --card:#151c1f; --ink:#eef1ea; --sand:#1b2a2b; --line:#26343a;
-    --muted:#98a29a; --text:#dde6df; --teal:#46b3a8; --teal-deep:#63c6ba; --lagoon:#54ccbe;
-    --coral:#f0764c; --good:#5cd196; --good-bg:#122a1f; --warn:#e4b155; --warn-bg:#2a2313;
+    --muted:#98a29a; --text:#dde6df; --teal:#46b3a8; --teal-deep:#63c6ba; --coral:#f0764c; --good:#5cd196;
     --shadow:0 1px 2px rgba(0,0,0,.4),0 12px 34px rgba(0,0,0,.38);
   }}
-  :root[data-theme="light"]{--paper:#f4f1ea;--card:#fefcf7;--ink:#1f262a;--sand:#ece5d6;--line:#e4dccd;--muted:#6f7168;--text:#242b27;--teal:#0e6b63;--lagoon:#2f9e90;--coral:#d3562a;--good:#2c7a54;--good-bg:#e8efe6;--warn:#8f6316;--warn-bg:#f1e8d3;}
-  :root[data-theme="dark"]{--paper:#0e1417;--card:#151c1f;--ink:#eef1ea;--sand:#1b2a2b;--line:#26343a;--muted:#98a29a;--text:#dde6df;--teal:#46b3a8;--lagoon:#54ccbe;--coral:#f0764c;--good:#5cd196;--good-bg:#122a1f;--warn:#e4b155;--warn-bg:#2a2313;}
+  :root[data-theme="light"]{--paper:#f4f1ea;--card:#fefcf7;--ink:#1f262a;--sand:#ece5d6;--line:#e4dccd;--muted:#6f7168;--text:#242b27;--teal:#0e6b63;--teal-deep:#0a4f49;--coral:#d3562a;--good:#2c7a54;}
+  :root[data-theme="dark"]{--paper:#0e1417;--card:#151c1f;--ink:#eef1ea;--sand:#1b2a2b;--line:#26343a;--muted:#98a29a;--text:#dde6df;--teal:#46b3a8;--teal-deep:#63c6ba;--coral:#f0764c;--good:#5cd196;}
   *{box-sizing:border-box}
-  body{margin:0;background:var(--paper);color:var(--text);font-family:var(--sans);line-height:1.5;-webkit-text-size-adjust:100%}
-  .wrap{max-width:920px;margin:0 auto;padding:0 20px}
-  .maplinks{display:flex;flex-wrap:wrap;gap:8px;margin-top:2px}
-  .btn2{font-size:13.5px;font-weight:700;padding:8px 13px;border-radius:9px;border:1px solid var(--line);background:var(--card);color:var(--teal-deep);white-space:nowrap}
-  .btn2:hover{border-color:var(--teal)}
-  header{padding:34px 0 8px}
-  .brand{font-family:var(--serif);font-size:15px;letter-spacing:.14em;text-transform:uppercase;color:var(--teal);font-weight:600}
-  h1{font-family:var(--serif);font-size:clamp(28px,6vw,44px);line-height:1.08;margin:.3em 0 .15em;color:var(--ink)}
-  .sub{color:var(--muted);font-size:16px;margin:0 0 6px}
-  .card{background:var(--card);border:1px solid var(--line);border-radius:16px;box-shadow:var(--shadow);padding:22px 22px;margin:18px 0}
-  .pick{border-color:var(--teal);border-width:2px}
-  .eyebrow{font-size:12px;letter-spacing:.13em;text-transform:uppercase;color:var(--coral);font-weight:700;margin:0 0 4px}
-  h2{font-family:var(--serif);font-size:26px;margin:34px 0 2px;color:var(--ink)}
-  h3{font-family:var(--serif);font-size:22px;margin:2px 0 6px;color:var(--ink)}
-  .badge{display:inline-block;background:var(--teal);color:#fff;font-size:12px;font-weight:700;letter-spacing:.03em;padding:5px 11px;border-radius:999px;margin-bottom:10px}
-  .ov{color:var(--good);font-weight:700}
-  .fee{color:var(--coral);font-weight:600}
-  .big{font-family:var(--serif);font-size:34px;color:var(--ink);font-weight:600}
-  .price-row{display:flex;flex-wrap:wrap;gap:8px 26px;align-items:baseline;margin:8px 0}
-  .price-row .n{color:var(--muted);font-size:14px}
-  ul.tight{margin:8px 0;padding-left:20px}
-  ul.tight li{margin:5px 0}
+  body{margin:0;background:var(--paper);color:var(--text);font-family:var(--sans);line-height:1.62;-webkit-text-size-adjust:100%}
+  .wrap{max-width:720px;margin:0 auto;padding:0 20px}
+  header{padding:52px 0 6px}
+  .kicker{font-size:12px;letter-spacing:.15em;text-transform:uppercase;color:var(--coral);font-weight:700}
+  h1{font-family:var(--serif);font-size:clamp(30px,6.4vw,48px);line-height:1.06;margin:.28em 0 .22em;color:var(--ink);letter-spacing:-.01em}
+  .deck{font-size:19px;color:var(--muted);margin:0 0 14px}
+  .byline{font-size:13.5px;color:var(--muted)}
+  h2{font-family:var(--serif);font-size:25px;margin:38px 0 6px;color:var(--ink)}
+  p{margin:.8em 0;font-size:18px}
+  .lede{font-size:20px}
   a{color:var(--teal-deep);text-decoration:none;border-bottom:1px solid color-mix(in srgb,var(--teal) 40%,transparent)}
   a:hover{border-bottom-color:var(--teal)}
-  .btn{display:inline-block;background:var(--coral);color:#fff;font-weight:700;padding:11px 18px;border-radius:11px;border:none;margin-top:4px}
-  .btn:hover{filter:brightness(1.06)}
-  table{width:100%;border-collapse:collapse;font-size:14.5px;margin:6px 0}
-  .scroll{overflow-x:auto;-webkit-overflow-scrolling:touch}
-  th,td{text-align:left;padding:9px 10px;border-bottom:1px solid var(--line);vertical-align:top}
-  th{font-size:12px;letter-spacing:.04em;text-transform:uppercase;color:var(--muted);font-weight:700}
-  tr.hi td{background:color-mix(in srgb,var(--teal) 8%,transparent)}
-  td.num{white-space:nowrap;font-variant-numeric:tabular-nums}
-  .note{color:var(--muted);font-size:13.5px}
-  .flag{display:inline-block;font-size:11px;font-weight:700;letter-spacing:.03em;padding:3px 8px;border-radius:6px;background:var(--warn-bg);color:var(--warn);margin-right:6px}
-  ol.steps{padding-left:0;list-style:none;counter-reset:s;margin:8px 0}
-  ol.steps li{counter-increment:s;position:relative;padding:10px 0 10px 42px;border-bottom:1px solid var(--line)}
-  ol.steps li:before{content:counter(s);position:absolute;left:0;top:9px;width:28px;height:28px;background:var(--teal);color:#fff;border-radius:50%;display:grid;place-items:center;font-weight:700;font-size:14px}
-  ol.steps li:last-child{border-bottom:none}
-  footer{border-top:1px solid var(--line);margin-top:40px;padding:22px 0 46px;color:var(--muted);font-size:12.5px}
+  ul{padding-left:20px}
+  li{margin:8px 0;font-size:18px}
+  .pull{font-family:var(--serif);font-size:23px;line-height:1.3;color:var(--ink);margin:26px 0;padding-left:18px;border-left:3px solid var(--coral)}
+  .end{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:18px 20px;margin:34px 0 0;box-shadow:var(--shadow)}
+  .end b{color:var(--ink)}
+  hr{border:none;border-top:1px solid var(--line);margin:34px 0}
+  footer{border-top:1px solid var(--line);margin-top:44px;padding:22px 0 56px;color:var(--muted);font-size:13px}
+  /* shared project nav */
+  .sitenav{display:flex;flex-wrap:wrap;gap:6px;margin:20px 0 8px;padding:7px;border:1px solid var(--line);border-radius:13px;background:var(--card);box-shadow:var(--shadow)}
+  .sitenav a,.sitenav span{padding:8px 13px;border-radius:9px;font-size:13.5px;font-weight:600;white-space:nowrap;border-bottom:none}
+  .sitenav a{color:var(--teal);text-decoration:none}
+  .sitenav a:hover{background:color-mix(in srgb,var(--teal) 9%,transparent)}
+  .sitenav .cur{font-weight:800;color:var(--ink);background:color-mix(in srgb,var(--teal) 15%,transparent);box-shadow:inset 0 -2px 0 var(--teal)}
+  /* funnel diagram — pure CSS, no scripts */
+  .funnel{display:flex;flex-wrap:wrap;align-items:stretch;gap:10px;margin:28px 0;padding:16px;border:1px solid var(--line);border-radius:14px;background:var(--card);box-shadow:var(--shadow)}
+  .fstage{flex:1 1 130px;text-align:center;padding:14px 8px;border-radius:11px;background:color-mix(in srgb,var(--teal) 7%,transparent)}
+  .fstage.win{background:color-mix(in srgb,var(--good) 14%,transparent)}
+  .fnum{font-family:var(--serif);font-size:36px;font-weight:700;color:var(--ink);line-height:1}
+  .fstage.win .fnum{color:var(--good)}
+  .flabel{font-size:13px;color:var(--muted);margin-top:6px;line-height:1.35}
+  .flabel b{color:var(--ink)}
+  .farrow{display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center;font-size:10.5px;font-weight:800;letter-spacing:.04em;text-transform:uppercase;color:var(--coral);min-width:64px}
+  .farrow span{font-size:20px;color:var(--muted);line-height:1}
+  @media(max-width:560px){.funnel{flex-direction:column}.farrow{flex-direction:row;gap:8px;min-width:0;padding:2px 0}.farrow span{font-size:15px}}
 </style>
 </head>
 <body>
 <div class="wrap">
 
-  <header>
-    <div class="brand">Maui · Trip Plan <span style="color:var(--muted);font-weight:600">· v42</span></div>
-    <h1>The plan</h1>
-    <p class="sub">2 adults · <b>Jul 25 → Aug 6, 2026</b> (12 nights) · celebrating her <b>Aug 5 birthday 🎂</b> · flights $0 on miles.</p>
-  </header>
+<header>
+  <div class="kicker">Show &amp; tell · the 3-minute version</div>
+  <h1>The condo that took 249 agents</h1>
+  <p class="deck">How I used a swarm of AI agents to do something totally mundane — book a vacation rental — and what it accidentally taught me about how people decide.</p>
+  <p class="byline"><b>Josh Gourneau</b> · 2026 · ~3 min read</p>
+</header>
 
-  <nav aria-label="Pages in this project" style="display:flex;flex-wrap:nowrap;gap:6px;overflow-x:auto;margin:18px 0 8px;padding:7px;border:1px solid var(--line);border-radius:12px;background:var(--card);-webkit-overflow-scrolling:touch"><span aria-current="page" style="flex:0 0 auto;padding:8px 12px;border-radius:8px;font-size:13.5px;font-weight:800;white-space:nowrap;color:var(--ink);background:color-mix(in srgb,var(--teal) 15%,transparent);box-shadow:inset 0 -2px 0 var(--teal)">📍 The plan</span><a href="story.html" style="flex:0 0 auto;padding:8px 12px;border-radius:8px;font-size:13.5px;font-weight:600;white-space:nowrap;color:var(--teal);text-decoration:none;border-bottom:none">✨ The story</a><a href="planning-with-agents.html" style="flex:0 0 auto;padding:8px 12px;border-radius:8px;font-size:13.5px;font-weight:600;white-space:nowrap;color:var(--teal);text-decoration:none;border-bottom:none">📖 Long version</a><a href="how-we-planned-maui.html" style="flex:0 0 auto;padding:8px 12px;border-radius:8px;font-size:13.5px;font-weight:600;white-space:nowrap;color:var(--teal);text-decoration:none;border-bottom:none">🛠 How we built it</a><a href="https://github.com/gourneau/adversarial-verify" target="_blank" rel="noopener" style="flex:0 0 auto;padding:8px 12px;border-radius:8px;font-size:13.5px;font-weight:600;white-space:nowrap;color:var(--teal);text-decoration:none;border-bottom:none">⌗ Code ↗</a></nav>
+<nav aria-label="Pages in this project" style="display:flex;flex-wrap:nowrap;gap:6px;overflow-x:auto;margin:18px 0 8px;padding:7px;border:1px solid var(--line);border-radius:12px;background:var(--card);-webkit-overflow-scrolling:touch"><span aria-current="page" style="flex:0 0 auto;padding:8px 12px;border-radius:8px;font-size:13.5px;font-weight:800;white-space:nowrap;color:var(--ink);background:color-mix(in srgb,var(--teal) 15%,transparent);box-shadow:inset 0 -2px 0 var(--teal)">✨ The story</span><a href="maui-trip-plan.html" style="flex:0 0 auto;padding:8px 12px;border-radius:8px;font-size:13.5px;font-weight:600;white-space:nowrap;color:var(--teal);text-decoration:none;border-bottom:none">📍 The plan</a><a href="planning-with-agents.html" style="flex:0 0 auto;padding:8px 12px;border-radius:8px;font-size:13.5px;font-weight:600;white-space:nowrap;color:var(--teal);text-decoration:none;border-bottom:none">📖 Long version</a><a href="how-we-planned-maui.html" style="flex:0 0 auto;padding:8px 12px;border-radius:8px;font-size:13.5px;font-weight:600;white-space:nowrap;color:var(--teal);text-decoration:none;border-bottom:none">🛠 How we built it</a><a href="https://github.com/gourneau/adversarial-verify" target="_blank" rel="noopener" style="flex:0 0 auto;padding:8px 12px;border-radius:8px;font-size:13.5px;font-weight:600;white-space:nowrap;color:var(--teal);text-decoration:none;border-bottom:none">⌗ Code ↗</a></nav>
 
-  <div style="margin:16px 0 4px;padding:15px 17px;border:1.5px solid var(--good);border-radius:14px;background:color-mix(in srgb,var(--good) 10%,transparent);box-shadow:var(--shadow)">
-    <div style="font-size:19px;color:var(--ink);font-family:var(--serif)"><b style="color:var(--good)">✅ Booked</b> — Maui Kamaole I-118</div>
-    <div style="margin-top:4px">1BR / 2BA · 1,000 sqft · <b>$2,937 all-in</b> · across from <b>Keawakapu</b> (the best-rated soft-swim beach) · 4.92★/185. The roomy one next to the best water. <a href="https://www.airbnb.com/rooms/22531397?check_in=2026-07-25&check_out=2026-08-06&adults=2" target="_blank" rel="noopener">View the booking on Airbnb ↗</a></div>
-    <div class="note" style="margin-top:6px">The <b>Royal Mauian</b> below was the beachfront runner-up (full ocean view, steps to the sand) — you traded the +$486 and step-onto-sand for an extra room and the best beach.</div>
+<p class="lede">I wanted to book a condo in Maui. Twelve nights, two people, a birthday. Under $3,500, an ocean view, and — the part that broke everything — a beach you could actually <em>swim</em> at. Soft sand, no rocks.</p>
+
+<p>That last one has no checkbox. No booking site has an "is the beach actually nice" field, and every listing swears its beach is perfect. So a task that sounds like ten minutes of clicking became a real search problem. I pointed a swarm of AI agents at it. It took <b>249 of them.</b></p>
+
+<h2>How it worked, in one breath</h2>
+
+<p>Instead of one assistant searching, I ran dozens in parallel — each hunting a different way: Airbnb, owner-direct sites, timeshares, independent beach guides. Then, for every "winner" they turned up, I ran a <em>second</em> wave of skeptic agents whose only job was to try to prove it wrong. Not rank it. Kill it.</p>
+
+<p class="pull">Searching gives you lots of plausible answers. Trying to disprove them is what leaves you with a true one.</p>
+
+<div class="funnel" aria-label="From a few hundred candidates down to one booking">
+  <div class="fstage">
+    <div class="fnum">~300</div>
+    <div class="flabel"><b>candidates</b><br>dozens of agents,<br>many search angles</div>
   </div>
-
-  <!-- THE PICK -->
-  <div class="card pick">
-    <span class="badge" style="background:var(--muted)">🥈 The beachfront runner-up · full ocean view · steps onto soft-swim sand</span>
-    <h2 style="margin-top:0">Royal Mauian — "Full Ocean, Full Sunsets"</h2>
-    <p style="margin:.2em 0 10px"><b class="ov">Full ocean view + sunsets</b> · <b>beachfront on Kamaʻole I</b> — steps onto soft, swimmable golden sand (one of Maui's best swim beaches) · split A/C · 4.92★/143 · Guest Favorite.</p>
-    <div class="price-row">
-      <span class="big">$3,423</span><span class="n">condo, all-in for 12 nts (tax in, no cleaning fee)</span>
-      <span class="ov">✓ under your $3,500 cap</span>
-    </div>
-    <p class="note" style="margin:2px 0 12px">The only unit that hits <b>full ocean view + step-onto-soft-swim-sand + under $3,500</b> at once — verified available &amp; adversarially checked. Book the <b>non-refundable</b> rate to hold this price (refundable is over cap). <b>Jul 25 start only.</b></p>
-    <a class="btn" href="https://www.airbnb.com/rooms/50815427?check_in=2026-07-25&check_out=2026-08-06&adults=2" target="_blank" rel="noopener">Book on Airbnb →</a>
+  <div class="farrow">fan out<br>then refute<br><span>⇉</span></div>
+  <div class="fstage">
+    <div class="fnum">9</div>
+    <div class="flabel"><b>survivors</b><br>skeptic agents<br>killed the rest</div>
   </div>
-
-  <!-- WHAT IT COSTS -->
-  <h2>What the trip costs</h2>
-  <div class="card">
-    <table><tbody>
-      <tr class="hi"><td>Condo — <b>Maui Kamaole I-118 (booked)</b>, all-in (tax in, no fees)</td><td class="num"><b>$2,937</b></td></tr>
-      <tr><td>Rental car — economy, 12 days (Costco, book refundable)</td><td class="num">~$610</td></tr>
-      <tr><td>Flights — 2 seats, Bay Area → OGG nonstop, on miles</td><td class="num ov">$0</td></tr>
-      <tr><td><b>Total for two (housing + car)</b></td><td class="num"><b>~$3,547</b></td></tr>
-    </tbody></table>
-    <p class="note" style="margin:8px 0 0">Housing is under your $3,500 cap; the rest is just the car. Flights are handled on airline miles — lock the award seats early (availability is the only risk).</p>
+  <div class="farrow">you<br>choose<br><span>✦</span></div>
+  <div class="fstage win">
+    <div class="fnum">1</div>
+    <div class="flabel"><b>booked</b><br>the one that<br>fit a life</div>
   </div>
+</div>
 
-  <!-- THE 3 REAL OPTIONS -->
-  <h2>The condos worth booking</h2>
-  <p class="sub" style="font-size:15px">All verified available for Jul 25 → Aug 6, real ocean view, walk to soft-swim sand, ≤ $3,500. Everything else was ruled out (below).</p>
-  <div class="card" style="padding:14px 14px">
-    <div class="scroll"><table>
-      <thead><tr><th>Condo</th><th class="num">★</th><th>🌊 View</th><th>❄️ A/C</th><th>🏖️ Beach · proximity · swim</th><th class="num">💰 All-in</th><th>📅 Start</th><th>📍 Map</th><th>Book</th></tr></thead>
-      <tbody>
-        <tr><td><b>🥈 Royal Mauian</b> "Full Ocean" <span class="note">(runner-up)</span></td><td class="num">4.92·143</td><td class="ov">full</td><td class="ov">split</td><td><b>ON Kamaʻole I</b> — steps · top-tier soft swim</td><td class="num"><b>$3,423</b></td><td>Jul 25</td><td><a href="https://www.google.com/maps/search/?api=1&amp;query=20.7193,-156.4476" target="_blank" rel="noopener">map ↗</a></td><td><a href="https://www.airbnb.com/rooms/50815427?check_in=2026-07-25&check_out=2026-08-06&adults=2" target="_blank" rel="noopener">book</a></td></tr>
-        <tr><td><b>💰 Kamaole Beach Royale #204</b><br><span class="note">value pick · full kitchen</span></td><td class="num">4.91·140</td><td class="ov">partial</td><td class="ov">yes</td><td>Kamaʻole I — 3–5 min walk · top-tier soft swim</td><td class="num">$2,556</td><td>Jul 24/25</td><td><a href="https://www.google.com/maps/search/?api=1&amp;query=20.7204,-156.4469" target="_blank" rel="noopener">map ↗</a></td><td><a href="https://www.airbnb.com/rooms/21244792?check_in=2026-07-25&check_out=2026-08-06&adults=2" target="_blank" rel="noopener">book</a></td></tr>
-        <tr class="hi"><td><b>✅ Maui Kamaole I-118 — BOOKED</b><br><span class="note">roomiest · 1BR/2BA, 1000 sqft</span></td><td class="num">4.92·185</td><td class="ov">partial</td><td class="ov">yes</td><td>Keawakapu — 5–10 min walk · best-rated soft swim</td><td class="num">$2,937</td><td>Jul 24/25</td><td><a href="https://www.google.com/maps/search/?api=1&amp;query=20.7088,-156.4447" target="_blank" rel="noopener">map ↗</a></td><td><a href="https://www.airbnb.com/rooms/22531397?check_in=2026-07-25&check_out=2026-08-06&adults=2" target="_blank" rel="noopener">book</a></td></tr>
-        <tr><td>Ocean Lookout · Sugar Beach<br><span class="note">cheapest ocean-view</span></td><td class="num">4.89·65</td><td class="ov">yes</td><td class="ov">yes</td><td>On Sugar Beach — steps · <span class="fee">murky swim</span></td><td class="num">$2,681</td><td>Jul 24/25</td><td><a href="https://www.google.com/maps/search/?api=1&amp;query=20.7908,-156.4760" target="_blank" rel="noopener">map ↗</a></td><td><a href="https://www.airbnb.com/rooms/1177019142012928867?check_in=2026-07-25&check_out=2026-08-06&adults=2" target="_blank" rel="noopener">book</a></td></tr>
-        <tr><td>Nani Kai Hale #307<br><span class="note">owner-direct · Bello Realty</span></td><td class="num">—</td><td class="ov">yes</td><td class="ov">both rms</td><td>On Sugar Beach — steps · <span class="fee">murky swim</span></td><td class="num">$3,003</td><td>Jul 24/25</td><td><a href="https://www.google.com/maps/search/?api=1&amp;query=20.7849,-156.4653" target="_blank" rel="noopener">map ↗</a></td><td><a href="https://www.bellomaui.com/" target="_blank" rel="noopener">book</a></td></tr>
-        <tr><td>Sugar Beach #530<br><span class="note">owner-direct · Coldwell Banker</span></td><td class="num">—</td><td class="ov">yes</td><td class="ov">yes</td><td>On Sugar Beach — 60 ft · <span class="fee">murky swim</span></td><td class="num">$3,173</td><td>Jul 24/25</td><td><a href="https://www.google.com/maps/search/?api=1&amp;query=20.7902,-156.4753" target="_blank" rel="noopener">map ↗</a></td><td><a href="https://www.cbislandvacations.com/vrp/unit/Sugar_Beach_Resort_530-712-15" target="_blank" rel="noopener">book</a></td></tr>
-        <tr><td>Punahoa Studio #304<br><span class="note">oceanfront studio (tight)</span></td><td class="num">4.88·91</td><td class="ov">oceanfront</td><td class="ov">yes</td><td>Charley Young — ON sand (1 min) · soft swim</td><td class="num">~$3,400</td><td>Jul 25</td><td><a href="https://www.google.com/maps/search/?api=1&amp;query=20.7267,-156.4497" target="_blank" rel="noopener">map ↗</a></td><td><a href="https://www.airbnb.com/rooms/12407761?check_in=2026-07-25&check_out=2026-08-06&adults=2" target="_blank" rel="noopener">book</a></td></tr>
-        <tr><td>Direct 180° · Kihei Surfside</td><td class="num">4.92·230</td><td class="ov">180°</td><td>confirm</td><td>Keawakapu — 2-min walk <span class="fee">(bldg on rock)</span></td><td class="num">~$3,467</td><td>Jul 25</td><td><a href="https://www.google.com/maps/search/?api=1&amp;query=20.7010,-156.4410" target="_blank" rel="noopener">map ↗</a></td><td><a href="https://www.airbnb.com/rooms/42250140?check_in=2026-07-25&check_out=2026-08-06&adults=2" target="_blank" rel="noopener">book</a></td></tr>
-        <tr><td>Maui Kamaole A-109<br><span class="note">1BR/2BA</span></td><td class="num">4.91·11</td><td>plausible</td><td class="ov">yes</td><td>Kamaʻole III — ~5 min walk · soft swim</td><td class="num">~$3,420</td><td>Jul 24/25</td><td><a href="https://www.google.com/maps/search/?api=1&amp;query=20.7082,-156.4453" target="_blank" rel="noopener">map ↗</a></td><td><a href="https://www.airbnb.com/rooms/49216563?check_in=2026-07-25&check_out=2026-08-06&adults=2" target="_blank" rel="noopener">book</a></td></tr>
-      </tbody>
-    </table></div>
-    <p class="note" style="margin:10px 4px 2px">Sorted best-first (full ocean view + softest-swim beach + value). Prices all-in, Hawaii tax incl. <b>Cheapest that still clears every filter:</b> #204 ($2,556) and Ocean Lookout ($2,681).</p>
-    <p class="note" style="margin:8px 4px 2px"><b>Ruled out:</b> Kihei Surfside #212 (owner link redirects — unverifiable) · Sugar Beach 502, #130, Kealia (booked) · Mana Kai studio (no confirmed ocean view) · cheaper across-the-road units like Kihei Akahi ($2,096) &amp; Maui Kamaole J-104 ($2,286) — <b>no ocean view</b>. <b>Dream but ~2× over budget:</b> Hale Pau Hana ($6,204, straight onto Kamaʻole II sand). <b>Hotels? Re-checked live on DirectBooker + TripAdvisor:</b> the only bookable non-luxury hotels are <b>Maui Coast</b> (~$3,704) and <b>Kohea Kai</b> (~$3,137–3,864) — inland Kīhei, <b>no ocean view, no kitchen</b>, at/over cap; luxury runs $6,900 → $13,700. <b>The beachfront condo wins.</b></p>
-  </div>
+<h2>Three times, a winner died</h2>
 
-  <!-- VALUE CHECK -->
-  <h2>Is a condo really the best value?</h2>
-  <p class="sub" style="font-size:15px"><b>Yes — I checked everything else.</b> A live cross-category sweep for your exact dates (timeshares, whole houses, hotel+car bundles, glamping/eco stays, and the book-a-month play). The condo is the <b>only</b> category that gives ocean view <em>+</em> soft-swim sand <em>+</em> a whole private place under $3,500.</p>
-  <div class="card" style="padding:14px 14px">
-    <div class="scroll"><table>
-      <thead><tr><th>Instead of a condo…</th><th class="num">Best found</th><th>Why it loses</th></tr></thead>
-      <tbody>
-        <tr><td>Timeshare week(s)</td><td class="num">~$5,571</td><td>Sat–Sat weeks force a 14-night 2-week stitch (2 wasted nights) — ~2× the price, and not on soft sand</td></tr>
-        <tr><td>Whole house near a swim beach</td><td class="num">$4,200–6,900+</td><td>All over cap; the under-budget cottages are far from soft sand or have owners on-site</td></tr>
-        <tr><td>Hotel + car bundle</td><td class="num">~$3,272+</td><td>Just marks up the same condo class (Aston Banyan / Kamaole Sands) — and it's across-the-road, not beachfront</td></tr>
-        <tr><td>Book a month (28-nt discount)</td><td class="num">~$4,700–5,000</td><td>Monthly discount is only ~10–13% — nowhere near paying for 16 extra nights. ~double. <span class="fee">Worst value.</span></td></tr>
-        <tr><td>Glamping / N-Shore cottage</td><td class="num">$2,682</td><td>Cheap + romantic, but a rocky cove — soft swim sand is a 10–20 min <b>drive</b> every beach day</td></tr>
-      </tbody>
-    </table></div>
-    <p class="note" style="margin:10px 4px 2px"><b>Verdict:</b> condos win. Best value is <b>Kamaole Beach Royale #204 ($2,556)</b> (ocean-view, 3–5 min to Kamaʻole I); <b>Royal Mauian ($3,423)</b> is the justified beachfront splurge (+$867 to step straight onto the sand). <b>Two non-condos genuinely worth a look:</b> <a href="https://www.airbnb.com/rooms/30321027?check_in=2026-07-25&check_out=2026-08-06&adults=2" target="_blank" rel="noopener">Kuau Beach Place</a> ($2,682) — the North-Shore <em>birthday-romance</em> play, ~200 yds to shore, half-mile walk to Paʻia + Mama's Fish House (but you drive to swim sand); and <a href="https://www.airbnb.com/rooms/31437561?check_in=2026-07-25&check_out=2026-08-06&adults=2" target="_blank" rel="noopener">"12-min walk to Kamaʻole II"</a> ($2,602, 4.97★/159) — a whole detached <em>house</em>, most privacy per dollar, keeps the soft Kamaʻole sand, but no ocean view.</p>
-  </div>
+<ul>
+  <li>The top pick was already <b>booked</b> — we'd just checked too early. (Availability is a moment, not a fact.)</li>
+  <li>A listing said "oceanfront." It fronted a shelf of <b>lava rock.</b></li>
+  <li>The weird one: load a sold-out Airbnb with your dates in the web address and the site quietly shows you a <b>different property</b> — same page, real price, wrong place. One "owner-direct" link redirected to a condo nine miles away. The agents only caught it because a skeptic checked that the page it landed on was actually the place we asked for.</li>
+</ul>
 
-  <!-- MAPS -->
-  <h2>See it on the map</h2>
-  <p class="sub" style="font-size:15px">Every condo has a <b>📍 Map</b> link in the table above (opens Google Maps at that exact spot). To scope the neighborhood, open these searches around your Kamaʻole base:</p>
-  <div class="card">
-    <div class="maplinks">
-      <a class="btn2" href="https://www.google.com/maps/search/?api=1&amp;query=Kamaole+Beach+Park+I,+Kihei,+HI" target="_blank" rel="noopener">🗺 Where you're staying ↗</a>
-      <a class="btn2" href="https://www.google.com/maps/search/?api=1&amp;query=restaurants+near+Kamaole+Beach+Kihei+HI" target="_blank" rel="noopener">🍽 Restaurants ↗</a>
-      <a class="btn2" href="https://www.google.com/maps/search/?api=1&amp;query=beaches+South+Kihei+HI" target="_blank" rel="noopener">🏖 Beaches ↗</a>
-      <a class="btn2" href="https://www.google.com/maps/search/?api=1&amp;query=coffee+near+Kamaole+Beach+Kihei+HI" target="_blank" rel="noopener">☕ Coffee ↗</a>
-      <a class="btn2" href="https://www.google.com/maps/search/?api=1&amp;query=grocery+store+Kihei+HI" target="_blank" rel="noopener">🛒 Groceries ↗</a>
-    </div>
-  </div>
+<h2>The part I didn't expect</h2>
 
-  <!-- WHY KAMAOLE I -->
-  <h2>Why these beaches (soft, swimmable — not rocky, not murky)</h2>
-  <div class="card" style="padding:14px 14px">
-    <div class="scroll"><table>
-      <thead><tr><th>Beach</th><th>Sand</th><th>Swim</th><th class="num">Rating</th></tr></thead>
-      <tbody>
-        <tr class="hi"><td><b>Keawakapu</b></td><td class="ov">soft white</td><td class="ov"><b>Best</b> — calmest, sandy bottom, gentle entry</td><td class="num">4.8 (570)</td></tr>
-        <tr class="hi"><td><b>Kamaʻole I / II</b></td><td class="ov">soft golden</td><td class="ov"><b>Excellent</b> — clear, calm, lifeguarded</td><td class="num">~4.6</td></tr>
-        <tr><td>Kamaʻole III</td><td>soft, some rocks</td><td>good — a few rocks</td><td class="num">~4.5</td></tr>
-        <tr><td>Charley Young</td><td>soft golden</td><td class="fee">mixed — rocks along shore</td><td class="num">4.7 (46)</td></tr>
-        <tr><td>Sugar Beach (N Kīhei)</td><td>soft, long</td><td class="fee">swimmable but <b>murky/cloudy</b></td><td class="num">mixed</td></tr>
-      </tbody>
-    </table></div>
-    <p class="note" style="margin:10px 4px 2px">Cross-referenced from independent beach guides, not the listings. The top picks all sit on or a short walk from <b>Kamaʻole I / Keawakapu</b> — the softest, most swimmable water. <b>⚠️ August = peak south-swell:</b> south-facing beaches can get big shorebreak — snorkel in the calm morning, check the day-of surf.</p>
-  </div>
+<p>The requirement that mattered most wasn't one I could have written down. The beach had to be <em>soft and swimmable</em> — no rocks. I only figured that out by being shown a place that was technically "oceanfront" and recoiling, because it fronted a shelf of lava rock.</p>
 
-  <!-- THINGS TO DO -->
-  <h2>Things to do</h2>
-  <p class="sub" style="font-size:15px">Water in the calm morning, everything else in the breezy afternoon. Two things sell out — book them day 1–2.</p>
-  <div class="card" style="padding:14px 14px">
-    <div class="scroll"><table>
-      <thead><tr><th>Activity</th><th>Notes</th><th class="num">~ / person</th><th>Book ahead?</th></tr></thead>
-      <tbody>
-        <tr class="hi"><td><b>🤿 Molokini + Turtle Town</b></td><td>Early (~6:30 AM Māʻalaea) snorkel cruise — glassiest before the trades; 100 ft+ viz</td><td class="num">$150–190</td><td class="fee">yes — book early</td></tr>
-        <tr class="hi"><td><b>🌋 Haleakalā sunset</b></td><td>No reservation — just the $30/car fee; warm layers (~40°F up top). <span class="fee">Sunrise reservations for your dates already sold out</span></td><td class="num">$30/car</td><td>no</td></tr>
-        <tr><td>🐢 Maluaka "Turtle Town"</td><td>Reliable green-sea-turtle snorkel from shore; go 7–10 AM</td><td class="num">$0</td><td>no</td></tr>
-        <tr><td>🚗 Road to Hāna</td><td>Full day; self-drive with the Shaka/GyPSy app, or a guided van so you both relax</td><td class="num">$0 / $180</td><td>day-of ok</td></tr>
-        <tr><td>🏄 Surf / SUP lesson (Kīhei)</td><td>Gentle south-shore breaks; great for the calm morning</td><td class="num">$80–120</td><td>1–2 days</td></tr>
-        <tr><td>🤿 ʻĀhihi-Kīnaʻu reserve</td><td>Best-viz snorkel on the island; lava-rock entry, reef shoes, calm AM only</td><td class="num">$0</td><td>no</td></tr>
-      </tbody>
-    </table></div>
-  </div>
+<p>That's not me being vague. It's how people are. "A good beach" has no definition and no checkbox — you know it when you see it. You often can't list what you want, but you can tell instantly when something's wrong. Every time I rejected an option, I was really teaching the system what I cared about. (The things I <em>could</em> write down — the budget, the dates — I handed over on day one. The work was keeping the machine honest about the stuff that only got sharp once I saw it.)</p>
 
-  <!-- DINING -->
-  <h2>Where to eat</h2>
-  <div class="card" style="padding:14px 14px">
-    <div class="scroll"><table>
-      <thead><tr><th>Spot</th><th>What</th><th class="num">$</th></tr></thead>
-      <tbody>
-        <tr class="hi"><td><b>Ferraro's</b> (Wailea)</td><td>Oceanfront Italian — the birthday splurge; book ~2 wks out</td><td class="num">$$$$</td></tr>
-        <tr><td>South Maui Fish Co.</td><td>Fresh poke bowls &amp; fish tacos (often sells out)</td><td class="num">$$</td></tr>
-        <tr><td>Coconut's Fish Cafe</td><td>Famous fish tacos, mahi &amp; chips, poke</td><td class="num">$$</td></tr>
-        <tr><td>Kīhei Caffe</td><td>The classic big breakfast before a beach day</td><td class="num">$$</td></tr>
-        <tr><td>Three's Bar &amp; Grill</td><td>Surf-and-turf, sushi, happy hour</td><td class="num">$$$</td></tr>
-        <tr><td>South Maui Gardens</td><td>10+ food trucks + live music (Thursdays)</td><td class="num">$$</td></tr>
-      </tbody>
-    </table></div>
-    <p class="note" style="margin:8px 4px 0">Groceries: <b>Instacart delivers to the condo</b> (Costco via Instacart needs no membership); Foodland Kīhei is 24 hrs.</p>
-  </div>
+<p>Which flips the whole thing on its head. The agents weren't a search engine. They were a cheap way to <b>discover what I wanted by bumping into what I didn't</b> — and <em>cheap</em> is the magic word. When re-searching costs a weekend, you commit early and settle. When it costs ten minutes, "I'll know it when I see it" stops being lazy and becomes the smart move.</p>
 
-  <!-- SCENE + ROMANCE -->
-  <h2>The scene &amp; date nights</h2>
-  <div class="card">
-    <ul class="tight">
-      <li><b>💃 Ecstatic Dance Maui</b> — Sundays ~12:30–3:15 PM ($20), but in <b>Haʻikū/Kahului (40–55 min drive)</b>, not Kīhei. Check <a href="https://www.instagram.com/mauiecstaticdance/" target="_blank" rel="noopener">@mauiecstaticdance</a> for the venue (Jul 27 &amp; Aug 3).</li>
-      <li><b>🔥 Luau</b> — Te Au Moana (Wailea, several nights/wk) or Old Lāhainā Lūʻau (nightly, north Lahaina — open and welcoming visitors).</li>
-      <li><b>🪘 Obon / Bon dances</b> — free taiko + open dance circle, matches your vibe; Wailuku falls ~Jul 31–Aug 1. Live music at the MACC amphitheater + ProArts Kīhei — check their calendars for your dates.</li>
-      <li><b>🌅 Best sunsets (free)</b> — Keawakapu (your beach), the 1.5-mi Wailea Beach Path past five crescent beaches, and quiet Polo Beach.</li>
-      <li><b>💆 Couples massage</b> — Maui's Best Massage (Kīhei), side-by-side from ~$260 — a great birthday-morning move; or a private sunset sail-and-snorkel for two.</li>
-    </ul>
-  </div>
+<h2>Who actually decides</h2>
 
-  <!-- WEATHER -->
-  <h2>Weather &amp; what to pack</h2>
-  <div class="card">
-    <ul class="tight">
-      <li><b>☀️ Sunny &amp; dry</b> — highs ~87°F, nights ~72°F, ocean ~78–80°F. One of the driest months (~9% of days see rain, usually brief). Sunset ~7:00 PM (book the birthday table ~6:15).</li>
-      <li><b>🧴 Reef-safe sunscreen is the LAW</b> — only mineral (zinc oxide / titanium dioxide) is legal, fines to $1,000. UV is extreme — pack mineral SPF 30–50 from home (cheaper than on-island).</li>
-      <li><b>🌊 Peak south-swell</b> — south-facing beaches can get high surf; snorkel calm mornings, check the day-of surf advisory.</li>
-      <li><b>❄️ A/C optional</b> — steady trade winds off the water keep 72°F nights comfortable; the pick has split A/C anyway.</li>
-    </ul>
-  </div>
+<p>When the dust settled, nine genuinely-good options were left. Choosing between "beachfront" and "an extra room" and "$500" isn't math — there's no correct formula. So the agents did what agents are good at (enforce the facts: is it real, available, affordable, actually swimmable?) and I did the one thing only I could: pick what I value.</p>
 
-  <!-- BIRTHDAY -->
-  <h2>Her birthday — Aug 5 🎂</h2>
-  <div class="card">
-    <ul class="tight">
-      <li><b>Beach day on Kamaʻole I</b> — right out front; soft sand, calm swim, sunset from the lanai.</li>
-      <li><b>Dinner</b> — <a href="https://www.ferrarosbarerestorante.com/" target="_blank" rel="noopener">Ferraro's</a> (oceanfront Italian, Wailea) or a Kīhei sunset spot; book ~2 weeks out.</li>
-      <li><b>Milky Way night</b> — the moon rises ~11:48 PM, so <b>~8:30–11:45 PM is dark</b> with the galactic core high. Early August is the best window; stargaze from the beach or Haleakalā summit.</li>
-    </ul>
-  </div>
+<p class="pull">249 agents narrowed a few hundred options down to nine. I picked the final one in about thirty seconds.</p>
 
-  <!-- ITINERARY -->
-  <h2>A loose plan · Jul 25 → Aug 6</h2>
-  <p class="sub" style="font-size:15px">Water in the calm morning, wind-friendly stuff in the afternoon. Swap any two days for weather. Book Molokini + Haleakalā day 1–2.</p>
-  <div class="card" style="padding:14px 14px">
-    <div class="scroll"><table>
-      <thead><tr><th>Day</th><th>Plan</th></tr></thead>
-      <tbody>
-        <tr><td class="num">Fri Jul 25</td><td>Arrive · groceries (Instacart/Foodland) · sunset + easy swim at Kamaʻole I</td></tr>
-        <tr><td class="num">Sat Jul 26</td><td>Beach warm-up on Keawakapu · <b>book Molokini + Haleakalā sunset now</b></td></tr>
-        <tr><td class="num">Sun Jul 27</td><td>Ecstatic Dance Maui (Haʻikū) · or Little/Big Beach</td></tr>
-        <tr><td class="num">Mon Jul 28</td><td>🤿 Molokini + Turtle Town snorkel (early, glassy AM) · rest afternoon</td></tr>
-        <tr><td class="num">Tue Jul 29</td><td>Maluaka "Turtle Town" snorkel · slow beach day</td></tr>
-        <tr><td class="num">Wed Jul 30</td><td>Road to Hāna (full day) — or a pure beach/pool day</td></tr>
-        <tr><td class="num">Thu Jul 31</td><td>Kīhei farmers market · beach · Wailea Beach Path sunset walk</td></tr>
-        <tr><td class="num">Fri Aug 1</td><td>🌋 Haleakalā sunset → Upcountry/Kula lunch</td></tr>
-        <tr><td class="num">Sat Aug 2</td><td>Keawakapu beach day · couples massage</td></tr>
-        <tr><td class="num">Sun Aug 3</td><td>Ecstatic dance / ʻĀhihi-Kīnaʻu snorkel (calm AM) · chill</td></tr>
-        <tr><td class="num">Mon Aug 4</td><td>Market · relax · birthday prep</td></tr>
-        <tr class="hi"><td class="num">Tue Aug 5 🎂</td><td>Spa morning · beach · sunset dinner at Ferraro's · Milky Way after</td></tr>
-        <tr><td class="num">Wed Aug 6</td><td>Sunrise swim → pack → fly home (OGG) — out before the jellyfish window</td></tr>
-      </tbody>
-    </table></div>
-  </div>
+<p>We booked a roomy 1,000-square-foot place across the road from the best-rated soft-sand beach in the area, for $2,937. And here's the honest kicker: it wasn't the agents' <b>#1</b> recommendation. They'd ranked a beachfront splurge first and a cheaper place second — this was <b>#3</b> on their own shortlist. I overrode them for the one thing they couldn't score: I wanted the extra room and the better beach more than I wanted to step straight onto the sand. It was never the front-runner. It was just the last one standing — plus a human's taste. The whole army of agents cost less than one night of the stay.</p>
 
-  <!-- BOOK IT -->
-  <h2>Book it — in order</h2>
-  <div class="card">
-    <ol class="steps">
-      <li><b>Condo</b> — <a href="https://www.airbnb.com/rooms/50815427?check_in=2026-07-25&check_out=2026-08-06&adults=2" target="_blank" rel="noopener">Royal Mauian on Airbnb</a>, non-refundable rate, Jul 25 → Aug 6. <span class="flag">DO FIRST</span> it's the only Jul-25 unit at this price.</li>
-      <li><b>Car</b> — <a href="https://www.costcotravel.com/Rental-Cars" target="_blank" rel="noopener">Costco economy ~$610</a> (12 days), <b>refundable</b>. Cars are scarce + ~2× at peak — book now, don't wait.</li>
-      <li><b>Flights</b> — lock 2 award seats, Bay Area → OGG nonstop (OAK/SFO best frequency). Availability is the only risk.</li>
-      <li><b>One adventure</b> — <a href="https://www.nps.gov/hale/" target="_blank" rel="noopener">Haleakalā sunset</a> (no reservation, $30/car) and/or a <b>refundable</b> Molokini snorkel early in the trip.</li>
-    </ol>
-  </div>
+<h2>The point</h2>
 
-  <!-- WATCH-OUTS -->
-  <h2>Watch-outs &amp; money-savers</h2>
-  <div class="card" style="padding:14px 14px">
-    <div class="scroll"><table>
-      <thead><tr><th>Watch-out</th><th>Do this</th></tr></thead>
-      <tbody>
-        <tr class="hi"><td>✈️ <b>Southwest Companion Pass</b></td><td>Biggest saver — a 2nd flyer goes for ~$11 rt, and it works on <b>points</b> bookings. If Josh holds/can trigger it, book ONE seat + add the partner.</td></tr>
-        <tr><td>🪼 <b>Box jellyfish (Aug 6–8)</b></td><td>South-shore influx ~8–10 days after the Jul 29 full moon. Jul 25 → the Aug 5 birthday are clear; front-load ocean days, keep vinegar in the condo. You fly out Aug 6. ✓</td></tr>
-        <tr><td>🚗 <b>Cars are scarce, ~2×</b></td><td>Minivans sell out island-wide; last-minute won't soften. Book the <b>refundable</b> car now.</td></tr>
-        <tr><td>🛒 <b>Costco car-only (not a bundle)</b></td><td>Book the <b>car by itself</b> on Costco Travel — unlimited miles, 2 drivers, free rebooking on price drops, ~$150 shop card (~$70–110 cheaper than a plain quote). Skip the hotel/car bundles — they just mark up the same condo class. The member must show the Costco card at OGG pickup or it re-prices; Costco pump/warehouse = Visa only.</td></tr>
-        <tr><td>🌀 <b>Hurricane season (Aug peak)</b></td><td>Standard insurance won't cover a near-miss — only CFAR does, and not once a storm is named. Book refundable; add CFAR within ~14–21 days of first deposit if you want an out.</td></tr>
-        <tr><td>🌡️ <b>Confirm the unit's A/C</b></td><td>Varies unit-to-unit in older condos. Royal Mauian's split A/C is confirmed; message any host to confirm before booking.</td></tr>
-        <tr><td>✅ <b>Cleared risks</b></td><td>Maui's short-term-rental phase-out doesn't reach S. Kīhei until 2031 (your picks are legal); Lahaina's Old Lāhainā Lūʻau is open and welcoming.</td></tr>
-      </tbody>
-    </table></div>
-  </div>
+<p>You can now aim a small army of tireless, skeptical researchers at the most boring decisions in your life, and have them do the parts people are bad at — being exhaustive, and being suspicious — while you do the part only you can. That's a genuinely new thing, and it's kind of wonderful.</p>
 
-  <footer>
-    <div style="margin-bottom:12px"><b>Read next:</b> <a href="how-we-planned-maui.html">🛠 How we built this with 249 AI agents</a> · <a href="planning-with-agents.html">✨ The story, for sharing</a></div>
-    Maui Trip Plan · <b>v42</b> (balanced) · updated 2026-07-07 · Jul 25 → Aug 6 (12 nts) · booked: Maui Kamaole I-118 (roomy, across from Keawakapu) · Royal Mauian = beachfront runner-up · ocean view + soft-swim sand + housing ≤ $3,500 · flights $0 on miles · verify all live prices before you book.
-  </footer>
+<div class="end">
+  <b>Want more?</b>
+  <ul style="margin:.5em 0 0">
+    <li><a href="planning-with-agents.html">📖 The long version</a> — the full walk-through, same story with all the detail (~7 min).</li>
+    <li><a href="how-we-planned-maui.html">🛠 How we built it</a> — the technical deep-dive: the tools, the workflows, the philosophy (~12 min).</li>
+    <li><a href="./">📍 The trip plan itself</a> — the actual dossier the agents produced.</li>
+  </ul>
+</div>
+
+<footer>
+  Built with Claude Code (Opus 4.8), a browser that tells the truth, and a healthy distrust of the word "oceanfront." Total agent spend: less than one night's stay.
+</footer>
 
 </div>
 </body>
