@@ -8,6 +8,32 @@ Plus the story of using a swarm of ~249 AI agents to do something completely mun
 
 > Searching produces *plausible* candidates. It does not produce *true* ones. When being wrong is expensive, the bottleneck isn't finding more options — it's **killing the bad ones**. Disproof is the scarce resource.
 
+## The shape
+
+```mermaid
+flowchart TD
+  A["Constraints — the hard filters"] --> B{"Fan out"}
+  B --> F1["Finder: marketplace"]
+  B --> F2["Finder: owner-direct"]
+  B --> F3["Finder: adjacent categories"]
+  B --> F4["Finder: independent sources — build the missing column"]
+  F1 --> C["Candidates — schema-validated"]
+  F2 --> C
+  F3 --> C
+  F4 --> C
+  C --> D{"Adversarial verify — refute by default"}
+  D -->|PROBLEM| X["Killed"]
+  D -->|CONFIRMED| S["Survivors"]
+  S --> N["Prove the negative"]
+  N --> R["Synthesize into the dossier"]
+  R --> AU{"Self-audit for contradictions"}
+  AU -->|contradiction| R
+  AU -->|clean| RV["Re-verify at commit time"]
+  RV --> H(["Human decides"])
+```
+
+*Agents narrow; humans decide. Every survivor is refuted before it's trusted.*
+
 ---
 
 ## The story
